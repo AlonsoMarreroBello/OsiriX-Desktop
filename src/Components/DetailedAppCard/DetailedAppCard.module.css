@@ -1,0 +1,110 @@
+.container {
+  display: flex;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--text-primary);
+  border-radius: 12px;
+  width: 50%;
+  height: 12rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  box-sizing: border-box;
+  color: var(--text-alternative);
+  overflow: hidden;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mainLinkArea {
+  display: flex;
+  flex-grow: 1;
+  text-decoration: none;
+  color: inherit;
+
+  min-width: 0;
+}
+
+.contentWrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  border-left: 2px solid var(--text-primary);
+  padding: 15px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-alternative);
+}
+
+.titleWrapper {
+  display: flex;
+  margin-bottom: 0.4rem;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: var(--text-alternative);
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  max-width: 90%;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 4.5rem;
+}
+
+.dataWrapper {
+  margin-top: auto;
+  padding-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dataText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.versionText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: auto;
+}
+
+.addButton {
+  height: fit-content;
+}
+.addIcon {
+  color: var(--text-primary);
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+.metaDataIcon {
+  color: var(--text-primary);
+  display: block;
+  margin-left: 0.5rem;
+}
