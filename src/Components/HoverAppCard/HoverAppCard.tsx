@@ -1,0 +1,46 @@
+import { CalendarMonth, Category, Download } from "@mui/icons-material";
+import AppInfo from "../../types/AppInfo";
+import style from "./HoverAppCard.module.css";
+interface HoverAppCardProps {
+  app: AppInfo;
+  className?: string;
+}
+
+const HoverAppCard = ({ app, className }: HoverAppCardProps) => {
+  return (
+    <div className={`${style.container} ${className || ""}`}>
+      {/* Usamos app.imgUrl para el banner/imagen principal */}
+      <img src={app.imgUrl} alt={`${app.name} banner`} className={style.banner} loading="lazy" />
+      <div className={style.contentWrapper}>
+        <h1 className={style.title}>{app.name}</h1>
+        <p className={style.description}>{app.description || "Descripción no disponible."}</p>
+        <div className={style.metaDataGrid}>
+          {/* Categorías */}
+          {app.categories && app.categories.length > 0 && (
+            <div className={style.metaDataItem}>
+              <Category className={style.metaDataIcon} fontSize="small" />
+              <span className={style.metaDataText}>{app.categories.join(", ")}</span>
+            </div>
+          )}
+          {/* Contador de Descargas (Ejemplo) */}
+          {app.downloads !== undefined && (
+            <div className={style.metaDataItem}>
+              <Download className={style.metaDataIcon} fontSize="small" />
+              {/* Puedes formatear el número si quieres */}
+              <span className={style.metaDataText}>{app.downloads.toLocaleString()}</span>
+            </div>
+          )}
+          {/* Fecha (Ejemplo) */}
+          {app.releaseDate && (
+            <div className={style.metaDataItem}>
+              <CalendarMonth className={style.metaDataIcon} fontSize="small" />
+              <span className={style.metaDataText}>{app.releaseDate.toString()}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HoverAppCard;
