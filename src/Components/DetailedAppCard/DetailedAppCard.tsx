@@ -23,11 +23,11 @@ const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
           <p className={styles.description}>{app.description}</p>
 
           <div className={styles.dataWrapper}>
-            <CalendarMonth className={styles.metaDataIcon} fontSize="medium" />
+            <CalendarMonth className={styles.metaDataIcon} />
             <span className={styles.dataText}>{app.releaseDate.toLocaleString()}</span>
-            <Download className={styles.metaDataIcon} fontSize="medium" />
+            <Download className={styles.metaDataIcon} />
             <span className={styles.dataText}>{app.downloads}</span>
-            <Category className={styles.metaDataIcon} fontSize="medium" />
+            <Category className={styles.metaDataIcon} />
             {app.categories.length > 1 ? (
               <span className={styles.dataText}>{app.categories.join(", ")}</span>
             ) : (
