@@ -1,5 +1,5 @@
 import { Category } from "@mui/icons-material";
-import AppInfo from "../../types/AppInfo";
+import AppInfo from "../../interfaces/AppInfo";
 import styles from "./ExtendedAppCard.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Button } from "@mui/material";

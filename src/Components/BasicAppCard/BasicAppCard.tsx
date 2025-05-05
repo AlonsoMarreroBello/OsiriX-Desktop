@@ -1,4 +1,4 @@
-import AppInfo from "../../types/AppInfo";
+import AppInfo from "../../interfaces/AppInfo";
 import styles from "./BasicAppCard.module.css";
 
 interface BasicAppCardProp {

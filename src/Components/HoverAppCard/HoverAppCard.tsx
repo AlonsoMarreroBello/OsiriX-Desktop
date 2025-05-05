@@ -1,5 +1,5 @@
 import { CalendarMonth, Category, Download } from "@mui/icons-material";
-import AppInfo from "../../types/AppInfo";
+import AppInfo from "../../interfaces/AppInfo";
 import style from "./HoverAppCard.module.css";
 interface HoverAppCardProps {
   app: AppInfo;
