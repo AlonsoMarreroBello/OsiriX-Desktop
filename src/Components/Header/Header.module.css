@@ -1,0 +1,62 @@
+.container {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--text-primary);
+    height: 2.5rem;
+}
+
+.actionWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1rem;
+
+}
+
+.navigationActionsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.userContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    font-size: 1rem;
+    margin: 0.6rem 0;
+    color: var(--text-primary);
+}
+
+.userAvatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border-color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.navigationText {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.navigationButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 0.6rem 0;
+}
+
+.icon {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
