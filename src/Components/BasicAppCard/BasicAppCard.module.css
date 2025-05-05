@@ -3,8 +3,8 @@
   background-color: var(--bg-tertiary);
   border: 2px solid var(--text-primary);
   border-radius: 20px;
-  width: 13rem;
-  height: 13rem;
+  width: 15rem;
+  height: 15rem;
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -13,10 +13,8 @@
   margin: 1rem;
 }
 
-.container:hover > .hoverCard {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-  transition-delay: 0.5s;
+.container:hover {
+  transform: translateY(-2px);
 }
 
 .contentWrapper {
@@ -60,14 +58,6 @@
   margin: 0;
 }
 
-.hoverCard {
-  position: absolute;
-  left: 15rem;
-  opacity: 0;
-  transform: translateX(-50%) scale(0.35);
-  transition:
-    opacity 0.2s ease-out,
-    visibility 0s linear 0.2s,
-    transform 0.2s ease-out;
-  transition-delay: 0.5s;
+.mainLinkArea {
+  text-decoration: none;
 }
