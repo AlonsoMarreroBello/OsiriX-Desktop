@@ -1,0 +1,68 @@
+.titleBar {
+    height: 2.3rem;
+    background: #1e1e1e;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    -webkit-app-region: drag;
+    /* 🔥 Permite mover la ventana */
+}
+
+.actionsContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.actionInnerContainer {
+    display: flex;
+    align-items: center;
+}
+
+.actionsContainer button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    /* 🔥 Evita que los botones muevan la ventana */
+}
+
+.actionsContainer button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.linkActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row;
+}
+
+.windowActions {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.icon {
+    font-size: 0.8rem;
+}
+
+.actionText {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    margin: 0;
+}
