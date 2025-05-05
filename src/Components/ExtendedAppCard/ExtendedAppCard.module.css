@@ -64,7 +64,7 @@
   padding-top: 5px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 1rem;
 }
 
 .dataText {
@@ -99,8 +99,6 @@
 
 .metaDataIcon {
   color: var(--text-primary);
-  display: block;
-  margin-left: 0.5rem;
 }
 
 .hoverCard {

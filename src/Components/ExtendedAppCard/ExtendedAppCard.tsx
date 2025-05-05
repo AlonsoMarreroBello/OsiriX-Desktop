@@ -27,7 +27,7 @@ const ExtendedAppCard = ({ app, onHover, onLeave }: ExtendedAppCardProps) => {
           <p className={styles.description}>{app.description}</p>
 
           <div className={styles.dataWrapper}>
-            <Category className={styles.metaDataIcon} fontSize="medium" />
+            <Category className={styles.metaDataIcon} />
             {app.categories.length > 1 ? (
               <span className={styles.dataText}>{app.categories.join(", ")}</span>
             ) : (
