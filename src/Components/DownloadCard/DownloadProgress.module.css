@@ -1,0 +1,217 @@
+/* DownloadProgress.module.css */
+
+:root {
+  /* --- Variables (Ajusta a tu tema) --- */
+  /* Colores */
+  --download-popup-bg-collapsed: #0a192f; /* Fondo círculo (Azul muy oscuro) */
+  --download-popup-bg-expanded: #1a1a2e; /* Fondo rectángulo (Gris/Azul oscuro) */
+  --download-popup-border: #64b5f6; /* Borde (Azul claro) */
+  --download-popup-icon: #ffffff;
+  --download-popup-text-primary: #e0e0e0; /* Texto principal claro */
+  --download-popup-text-secondary: #b0bec5; /* Texto secundario */
+
+  /* Progreso Circular */
+  --download-circle-track: rgba(255, 255, 255, 0.2);
+  --download-circle-bar: #64ffda; /* Cian */
+
+  /* Progreso Lineal */
+  --download-linear-track: #37474f; /* Fondo barra lineal */
+  --download-linear-fill: #29b6f6; /* Relleno barra lineal */
+
+  /* Fuente */
+  --download-font: "Comic Sans MS", "Patrick Hand", cursive; /* Fuente casual */
+
+  /* Animación */
+  --transition-duration: 0.4s;
+  --transition-easing: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  /* --transition-easing: ease-in-out; */
+}
+
+/* --- Contenedor Principal --- */
+.container {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border: 2px solid var(--download-popup-border);
+  cursor: pointer;
+  overflow: hidden;
+  font-family: var(--download-font);
+  color: var(--download-popup-text-primary);
+  user-select: none;
+  transition:
+    width var(--transition-duration) var(--transition-easing),
+    height var(--transition-duration) var(--transition-easing),
+    border-radius var(--transition-duration) var(--transition-easing),
+    background-color var(--transition-duration) ease-in-out;
+}
+
+/* --- Estado Colapsado --- */
+.collapsed {
+  border-radius: 50%;
+  background-color: var(--download-popup-bg-collapsed);
+  padding: 4px;
+  align-items: center;
+}
+
+/* --- Estado Expandido --- */
+.expanded {
+  width: 420px; /* Ancho fijo expandido */
+  /* La altura se ajustará al contenido gracias a flex column */
+  min-height: 80px; /* Altura mínima */
+  border-radius: 15px;
+  background-color: var(--download-popup-bg-expanded);
+  padding: 0;
+}
+
+/* --- SVG Círculo --- */
+.svgProgress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+  transition: opacity calc(var(--transition-duration) * 0.4) ease-out;
+}
+.svgProgress.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.progressTrack {
+  stroke: var(--download-circle-track);
+}
+.progressBar {
+  stroke: var(--download-circle-bar);
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+/* --- Contenedor Icono --- */
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    padding var(--transition-duration) var(--transition-easing),
+    border-right-width calc(var(--transition-duration) * 0.8) ease-in-out,
+    border-color var(--transition-duration) ease-in-out;
+  border-right: 0px solid transparent;
+}
+.collapsed .iconContainer {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  border-right-width: 0px;
+}
+.expanded .iconContainer {
+  padding: 10px 15px;
+  border-right: 2px solid var(--download-popup-border); /* Línea divisora */
+  border-right-width: 2px;
+}
+.icon {
+  color: var(--download-popup-icon); /* Color blanco */
+  display: flex;
+  align-items: center;
+  transition: font-size var(--transition-duration) var(--transition-easing);
+  font-size: 1.5rem; /* Tamaño colapsado */
+}
+.expanded .icon {
+  font-size: 3rem;
+}
+
+/* --- Sección Detalles (Expandido) - CORREGIDA --- */
+.detailsSection {
+  flex-grow: 1; /* Ocupa el espacio restante */
+  display: flex;
+  flex-direction: column; /* Apila los elementos verticalmente */
+  justify-content: center; /* Centra verticalmente el contenido */
+  padding: 8px 15px; /* Espaciado interno */
+  min-width: 0; /* Para que funcione text-overflow */
+  gap: 4px; /* Espacio entre elementos apilados */
+  opacity: 0; /* Oculto inicialmente */
+  transform: translateX(-10px);
+  transition:
+    opacity calc(var(--transition-duration) * 0.6) ease-in-out
+      calc(var(--transition-duration) * 0.4),
+    transform calc(var(--transition-duration) * 0.6) ease-in-out
+      calc(var(--transition-duration) * 0.4);
+}
+.detailsSection.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.expanded .detailsSection {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- Elementos dentro de Detalles --- */
+.statusText {
+  font-size: 1.1rem; /* Tamaño como en la imagen */
+  font-weight: bold;
+  text-align: center; /* Alineado a la izquierda */
+  width: 100%; /* Ocupa todo el ancho */
+  margin-bottom: 2px; /* Pequeño espacio abajo */
+  color: var(--download-popup-text-primary); /* Texto claro */
+}
+
+.progressMetaRow {
+  /* NUEVA CLASE: Contiene % y Nombre */
+  display: flex;
+  align-items: baseline; /* Alinea texto por la base */
+  justify-content: flex-start; /* Alinea elementos al inicio */
+  gap: 10px; /* Espacio entre % y nombre */
+  width: 100%;
+}
+
+.percentage {
+  font-size: 1.2rem; /* Tamaño destacado */
+  font-weight: bold;
+  color: var(--download-popup-text-primary); /* Texto claro */
+  flex-shrink: 0; /* No se encoge */
+}
+
+.appName {
+  font-size: 1rem; /* Tamaño normal */
+  color: var(--text-primary); /* Color secundario */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1; /* Ocupa espacio restante */
+  min-width: 0; /* Necesario para ellipsis en flex */
+  text-align: left; /* Alineado a la izquierda */
+}
+
+.linearProgressBarContainer {
+  width: 100%; /* Ocupa todo el ancho */
+  margin: 4px 0; /* Espacio vertical alrededor */
+  display: flex; /* Flexbox para alinear elementos */
+  flex-direction: row;
+}
+
+.linearProgressBarTrack {
+  width: 100%;
+  height: 8px; /* Altura barra */
+  background-color: var(--download-linear-track);
+  border-radius: 6px;
+  border: 1px solid var(--download-popup-border);
+  position: relative;
+  overflow: hidden;
+  margin: auto 0;
+}
+
+.linearProgressBarFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--download-linear-fill);
+  border-radius: 6px;
+  transition: width 0.3s ease-in-out;
+}
+
+.indexText {
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-align: center; /* Alineado a la izquierda */
+  width: 100%;
+}
