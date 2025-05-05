@@ -1,20 +1,19 @@
-import Button from "@mui/material/Button";
-import TitleBar from "./titleBar";
+import TitleBar from "./TitleBar/TitleBar";
+import Header from "./Header/Header";
+import HomePage from "../pages/home/HomePage";
+
 
 const App = () => {
+
+
   return (
     <div>
       <TitleBar />
+      <Header username="TuPrima" />
       <div className="container">
-        <h1>Este es un test para nuestro portal de aplicaciones</h1>
-        <Button
-          onClick={() => console.log("BOTON PULSADO")}
-          variant="contained"
-          sx={{ backgroundColor: "red" }}
-        >
-          Test Button
-        </Button>
+        <HomePage />
       </div>
+
     </div>
   );
 };
