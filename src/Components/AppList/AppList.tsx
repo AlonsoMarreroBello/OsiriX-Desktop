@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import AppInfo from "../../interfaces/AppInfo";
-import dummyAppData from "../../data/FakeData";
 import styles from "./AppList.module.css";
 import BasicAppCard from "../BasicAppCard/BasicAppCard";
 import ExtendedAppCard from "../ExtendedAppCard/ExtendedAppCard";
 import DetailedAppCard from "../DetailedAppCard/DetailedAppCard";
 import SearchBar from "../SearchBar/SearchBar";
-import Filter from "../Filter/Filter";
+import FilterBar from "../FilterBar/FilterBar";
 
 interface AppListProps {
   apps: AppInfo[];
@@ -66,7 +65,7 @@ const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => 
         <SearchBar />
       </div>
       <div className={styles.filterControlsContainer}>
-        <Filter handleViewMode={handleViewModeChange} />
+        <FilterBar handleViewMode={handleViewModeChange} />
         <div className={styles.listContainer}>
           <div className={checkViewMode()}>{apps.map((app) => renderApps(app))}</div>
         </div>
