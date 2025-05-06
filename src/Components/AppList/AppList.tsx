@@ -6,7 +6,7 @@ import BasicAppCard from "../BasicAppCard/BasicAppCard";
 import ExtendedAppCard from "../ExtendedAppCard/ExtendedAppCard";
 import DetailedAppCard from "../DetailedAppCard/DetailedAppCard";
 import SearchBar from "../SearchBar/SearchBar";
-import FilterBar from "../FilterBar/FilterBar";
+import FilterBar, { ViewMode } from "../FilterBar/FilterBar";
 
 interface AppListProps {
   apps: AppInfo[];
@@ -14,15 +14,13 @@ interface AppListProps {
   handleMouseLeave?: () => void | null;
 }
 
-type ViewMode = "small" | "medium" | "list";
-
 const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => {
-  const [viewMode, setViewMode] = useState<ViewMode>("medium");
+  const [viewMode, setViewMode] = useState<ViewMode>("lista");
 
   const checkViewMode = () => {
-    if (viewMode === "small") {
+    if (viewMode === "mosaico") {
       return styles.appMosaicList;
-    } else if (viewMode === "medium") {
+    } else if (viewMode === "lista") {
       return styles.appOtherList;
     }
   };
@@ -30,8 +28,8 @@ const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => 
     checkViewMode();
   }, [viewMode]);
   const renderApps = (app: AppInfo) => {
-    switch (viewMode) {
-      case "small":
+    switch (viewMode.toLowerCase()) {
+      case "mosaico":
         return (
           <BasicAppCard
             key={app.id}
@@ -40,7 +38,7 @@ const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => 
             onLeave={handleMouseLeave}
           />
         );
-      case "medium":
+      case "lista":
         return (
           <ExtendedAppCard
             key={app.id}
@@ -49,7 +47,7 @@ const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => 
             onLeave={handleMouseLeave}
           />
         );
-      case "list":
+      case "detalles":
       default:
         return <DetailedAppCard key={app.id} app={app} />;
     }
