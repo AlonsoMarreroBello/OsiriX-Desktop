@@ -97,10 +97,6 @@
   margin-left: auto;
 }
 
-.metaDataIcon {
-  color: var(--text-primary);
-}
-
 .hoverCard {
   position: absolute;
   left: 15rem;
