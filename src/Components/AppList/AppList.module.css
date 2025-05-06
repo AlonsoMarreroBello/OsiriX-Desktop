@@ -1,86 +1,55 @@
-/* src/components/LibraryView/LibraryView.module.css */
-.libraryViewContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    /* Espacio entre secciones */
-    padding: 20px;
-    /* Asumiendo un fondo oscuro global para la ventana */
-    color: white;
-    height: 100%;
-    /* Ocupa la altura disponible */
-    box-sizing: border-box;
-    /* Para que el padding no aumente el tamaño total */
+.appList {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
 }
 
-.topControls {
-    /* Contenedor para la barra de búsqueda, podría tener más elementos */
-    display: flex;
+.appOtherList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
 }
 
-.filterControls {
-    /* Contenedor para los botones de filtro/vista */
-    display: flex;
-    padding: 10px;
-    border: 1px solid rgba(173, 216, 230, 0.5);
-    /* Ejemplo de borde azul claro */
-    border-radius: 8px;
-    background-color: rgba(10, 25, 47, 0.5);
-    /* Ejemplo de fondo azul oscuro semi-transparente */
+.appMosaicList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
 }
 
-.appDisplayArea {
-    flex-grow: 1;
-    /* Hace que esta área ocupe el espacio vertical restante */
-    padding: 20px;
-    border: 1px solid rgba(173, 216, 230, 0.5);
-    border-radius: 8px;
-    background-color: rgba(10, 25, 47, 0.3);
-    overflow-y: auto;
-    /* Añade scroll si el contenido excede el espacio */
+.appsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 5rem;
+  height: 48rem;
 }
 
-/* --- Estilos Placeholder (temporales) --- */
-.placeholderSearchBar,
-.placeholderFilterControls,
-.placeholderAppDisplay {
-    border: 1px dashed #aaa;
-    padding: 15px;
-    color: #ccc;
-    font-style: italic;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.searchBarContainer {
+  width: 50%;
+  align-self: center;
 }
 
-.placeholderSearchBar {
-    flex-grow: 1;
-    /* Ocupa espacio en topControls */
+.filterControlsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  gap: 1rem;
+  align-self: center;
 }
 
-.placeholderFilterControls button {
-    /* Estilos básicos para los botones de prueba */
-    padding: 5px 10px;
-    background-color: #334;
-    color: white;
-    border: 1px solid #556;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.placeholderFilterControls button:hover {
-    background-color: #445;
-}
-
-.placeholderAppDisplay ul {
-    list-style: none;
-    padding-left: 20px;
-    margin: 0;
-    color: white;
-    /* Hacer visible la lista temporal */
-}
-
-.placeholderAppDisplay li {
-    margin-bottom: 5px;
+.listContainer {
+  padding: 0 3rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--text-primary);
+  border-radius: 2rem;
+  min-height: 40rem;
+  max-height: 40rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
