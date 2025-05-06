@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  padding: 0.5rem;
+  border: 1px solid var(--text-alternative);
+  border-radius: 1rem;
+}
+.filterButton {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  padding: 0.76rem 3rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.filterButton:hover {
+  background-color: var(--bg-tertiary);
+  transition: background-color 0.3s ease;
+}
+
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownMenu {
+  position: absolute;
+  left: 0;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--text-primary);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  min-width: 150px;
+}
+
+.dropdownMenu:last-child {
+  border-bottom: none; /* Elimina el borde inferior del último elemento */
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid var(--text-primary);
+  color: var(--text-alternative);
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.dropdownItem:hover {
+  background-color: var(--bg-primary); /* Color de fondo al hacer hover en un item */
+}
