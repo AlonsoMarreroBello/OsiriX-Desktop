@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import hoverCardStyle from "../../components/HoverAppCard/HoverAppCard.module.css";
 import AppInfo from "../../interfaces/AppInfo";
 import HoverAppCard from "../../components/HoverAppCard/HoverAppCard";
-import dummyAppData from "../../data/FakeData";
+import { dummyAppData } from "../../data/FakeData";
 import AppList from "../../components/AppList/AppList";
 
 interface CardPosition {
