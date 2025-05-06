@@ -71,8 +71,8 @@
 .checkboxGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(160px, 1fr));
-  max-height: 5rem;
-  min-height: 5rem;
+  max-height: 8rem;
+  min-height: 8rem;
   overflow-y: scroll;
   scrollbar-width: none;
   padding-right: 1rem;
@@ -82,11 +82,7 @@
 .radioLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
   color: var(--text-primary);
-  cursor: pointer;
-  padding: 4px 0;
   cursor: pointer;
 }
 

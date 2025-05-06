@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import InputField from "../InputField/InputField";
 import { Category } from "../../interfaces/Category";
 import { allGameCategories, allAppCategories } from "../../data/FakeData";
+import { Checkbox, Radio } from "@mui/material";
 
 interface FilterBarProps {
   handleViewMode: (mode: string) => void;
@@ -135,14 +136,19 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
       <div className={mainStyle.checkboxGrid}>
         {(categoryTab === "games" ? allGameCategories : allAppCategories).map((cat) => (
           <label key={cat.categoryId} className={mainStyle.checkboxLabel}>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={(categoryTab === "games"
                 ? selectedGameCategories
                 : selectedAppCategories
               ).includes(cat.categoryId)}
               onChange={() => handleCategoryCheckboxChange(cat.categoryId, categoryTab)}
-            />{" "}
+              sx={{
+                color: "var(--text-primary)",
+                "&.Mui-checked": {
+                  color: "var(--text-alternative)",
+                },
+              }}
+            />
             {cat.categoryName}
           </label>
         ))}
@@ -191,11 +197,15 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
         <div className={mainStyle.sortCriteriaSection}>
           {sortCriteriaOptions.map((crit) => (
             <label key={crit} className={mainStyle.checkboxLabel}>
-              <input
-                type="checkbox"
-                value={crit}
+              <Checkbox
                 checked={selectedSortBy.includes(crit)}
                 onChange={() => handleSortByCheckboxChange(crit)}
+                sx={{
+                  color: "var(--text-primary)",
+                  "&.Mui-checked": {
+                    color: "var(--text-alternative)",
+                  },
+                }}
               />
               {crit}
             </label>
@@ -205,12 +215,18 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
         <div className={mainStyle.sortOrderSection}>
           {sortOrderOptions.map((order) => (
             <label key={order.toLowerCase()} className={mainStyle.radioLabel}>
-              <input
-                type="radio"
-                name="sortOrderGlobal"
-                value={order.toLowerCase()}
+              <Radio
                 checked={sortOrder === order.toLowerCase()}
                 onChange={() => setSortOrder(order.toLowerCase())}
+                sx={{
+                  color: "var(--text-primary)",
+                  "&.Mui-checked": {
+                    color: "var(--text-alternative)",
+                  },
+                  "& .MuiSvgIcon-root": {
+                    fontSize: "1.5rem",
+                  },
+                }}
               />
               {order}
             </label>
