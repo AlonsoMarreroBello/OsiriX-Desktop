@@ -1,64 +1,148 @@
+/* src/components/FilterBar/FilterBar.module.css */
 .container {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
   background-color: var(--bg-secondary);
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   border: 1px solid var(--text-alternative);
   border-radius: 1rem;
 }
+
 .filterButton {
   background: none;
   border: none;
   color: var(--text-primary);
-  padding: 0.76rem 3rem;
+  padding: 0.76rem 1.5rem;
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  border-radius: 0.5rem;
 }
 
 .filterButton:hover {
   background-color: var(--bg-tertiary);
-  transition: background-color 0.3s ease;
+  color: var(--text-alternative); /* Un color de acento en hover */
 }
 
-.dropdownContainer {
-  position: relative;
-  display: inline-block;
+.dropdownContent {
+  padding: 1.5rem;
+}
+.dropdownMenuContainer {
+  min-width: 30rem;
 }
 
-.dropdownMenu {
-  position: absolute;
-  left: 0;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--text-primary);
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  min-width: 150px;
+/* Estilos para las pestañas de categoría */
+.categoryTabs {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 1rem;
+}
+.tabButton {
+  background: none;
+  border: none;
+  color: var(--text-alternative);
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-bottom: 3px solid transparent;
+  font-weight: bold;
+  transition:
+    color 0.2s ease,
+    border-bottom-color 0.2s ease;
+}
+.tabButton:hover {
+  color: var(--text-primary);
+}
+.tabButton.activeTab {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
 }
 
-.dropdownMenu:last-child {
-  border-bottom: none; /* Elimina el borde inferior del último elemento */
+.borderTab {
+  border: 1px solid var(--text-alternative);
+}
+
+/* Estilos para los checkboxes y radios */
+.checkboxGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  max-height: 5rem;
+  min-height: 5rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+}
+.checkboxLabel,
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+/* Botones de Acción (Cancelar/Aplicar) */
+.dropdownActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 1rem;
+}
+.actionButton {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--text-alternative);
+  padding: 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  font-weight: bold;
+}
+.actionButton:hover {
+  border-color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+/* Estilos para Dropdown de Ordenar */
+.sortSectionsContainer {
+  display: flex;
+  gap: 1rem;
+}
+
+.sortCriteriaSection,
+.sortOrderSection {
+  flex: 1;
 }
 
 .dropdownItem {
   display: block;
   width: 100%;
-  padding: 10px 15px;
-  background-color: transparent;
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  border: none;
   border-bottom: 1px solid var(--text-primary);
   color: var(--text-alternative);
   text-align: left;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
 }
-
+.dropdownItem:last-child {
+  border: none;
+}
 .dropdownItem:hover {
-  background-color: var(--bg-primary); /* Color de fondo al hacer hover en un item */
+  background-color: var(--bg-primary);
 }
