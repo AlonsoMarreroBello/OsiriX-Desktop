@@ -1,15 +1,18 @@
 import { CalendarMonth, Category, Download } from "@mui/icons-material";
 import AppInfo from "../../interfaces/AppInfo";
 import style from "./HoverAppCard.module.css";
+import React from "react";
 interface HoverAppCardProps {
   app: AppInfo;
   className?: string;
   inlineStyle?: React.CSSProperties;
+  ref?: React.Ref<HTMLDivElement>;
+  isDisplaced?: boolean; // Añadido para manejar el desplazamiento
 }
 
-const HoverAppCard = ({ app, className, inlineStyle }: HoverAppCardProps) => {
+const HoverAppCard = ({ app, className, inlineStyle, ref }: HoverAppCardProps) => {
   return (
-    <div className={`${style.container} ${className || ""}`} style={inlineStyle}>
+    <div ref={ref} className={`${style.container} ${className || ""}`} style={inlineStyle}>
       <div className={style.contentWrapper}>
         <img src={app.imgUrl} alt={`${app.name} banner`} className={style.banner} />
         <h1 className={style.title}>{app.name}</h1>
