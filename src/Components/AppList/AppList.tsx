@@ -16,6 +16,15 @@ interface AppListProps {
 
 const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>("lista");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchTerm = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const search = () => {
+    console.log("Buscando: ", searchTerm);
+  };
 
   const checkViewMode = () => {
     if (viewMode === "mosaico") {
@@ -60,7 +69,12 @@ const AppList = ({ apps, handleMouseEnter, handleMouseLeave }: AppListProps) => 
   return (
     <div className={styles.appsContainer}>
       <div className={styles.searchBarContainer}>
-        <SearchBar />
+        <SearchBar
+          placeholder="Buscar aplicaciones"
+          onSearch={search}
+          value={searchTerm}
+          onChange={(e) => handleSearchTerm(e.currentTarget.value)}
+        />
       </div>
       <div className={styles.filterControlsContainer}>
         <FilterBar handleViewMode={handleViewModeChange} />
