@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import AppInfo from "../../interfaces/AppInfo";
 import styles from "./BasicAppCard.module.css";
 
@@ -8,8 +9,9 @@ interface BasicAppCardProp {
 }
 
 const BasicAppCard = ({ app, onHover, onLeave }: BasicAppCardProp) => {
+  const navigate = useNavigate();
   return (
-    <a href="https://guthib.com/" className={styles.mainLinkArea}>
+    <a onClick={() => navigate(`/app/${app.id}`)} className={styles.mainLinkArea}>
       <div
         className={styles.container}
         onMouseEnter={(e) => onHover(e, app)}
