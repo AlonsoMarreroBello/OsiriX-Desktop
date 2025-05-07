@@ -1,0 +1,79 @@
+.muiModalBoxStyled {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: 15rem;
+  max-height: 15rem;
+  max-width: 22rem;
+  min-width: 31rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  border-radius: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 2rem;
+  align-content: center;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  z-index: 10;
+}
+.closeButton:hover {
+  color: var(--text-alternative);
+  background-color: var(--bg-tertiary);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.titleText {
+  font-size: 1.5rem;
+  color: var(--text-alternative);
+  margin: 0;
+}
+
+.actionButtonsContainer {
+  display: flex;
+  gap: 1rem;
+}
+.actionButton {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--text-alternative);
+  padding: 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  font-weight: bold;
+}
+.actionButton:hover {
+  border-color: var(--text-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-alternative);
+}
+
+input[type="text"]::placeholder {
+  color: var(--text-primary);
+  opacity: 0.5;
+}
