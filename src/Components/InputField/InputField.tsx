@@ -1,7 +1,7 @@
 import styles from "./InputField.module.css";
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   id: string;
 }
 

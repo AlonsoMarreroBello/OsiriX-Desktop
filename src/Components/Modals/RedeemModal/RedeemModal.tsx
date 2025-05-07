@@ -45,7 +45,7 @@ const RedeemModal = ({ open, onClose }: RedeemModalProps) => {
               Cancelar
             </button>
             <button onClick={sendRedeemCode} className={`${style.actionButton}`}>
-              Aplicar Filtros
+              Aceptar
             </button>
           </div>
         </div>
