@@ -1,5 +1,5 @@
 // src/components/Modals/FriendModal/FriendModal.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import style from "./FriendModal.module.css";
 import SearchBar from "../../SearchBar/SearchBar"; // Asegúrate que la ruta es correcta
 import { Close as CloseIcon, PersonAddAlt1 as AddFriendIconMUI } from "@mui/icons-material"; // Icono de añadir amigo más específico
@@ -8,10 +8,24 @@ import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import User from "../../../interfaces/User";
+import InputField from "../../../components/InputField/InputField";
 
 interface FriendModalProps {
   open: boolean;
   onClose: () => void;
+}
+interface CustomContextMenuProps {
+  x: number;
+  y: number;
+  onClose: () => void;
+  onDelete: () => void;
+}
+
+interface ContextMenuProps {
+  visible: boolean;
+  x: number;
+  y: number;
+  selectedFriend: User | null;
 }
 
 const exampleFriendsInitialData: User[] = Array.from({ length: 50 }, (_, i) => ({
@@ -24,11 +38,120 @@ const exampleUserInitialData: User = {
   friends: exampleFriendsInitialData,
 };
 
-export const FriendModal = ({ open, onClose }: FriendModalProps) => {
+const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
+  const [friendName, setFriendName] = useState<string>("");
+
+  const handleFriendNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFriendName(e.target.value);
+  };
+
+  const sendFriendRequest = () => {
+    console.log("Nombre de usuario al que solicitar amistad: ", friendName);
+    onClose();
+  };
+
+  return (
+    <>
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+        sx={{ zIndex: 1300 }}
+      >
+        <Box className={style.muiModalChildStyled}>
+          <button onClick={onClose} className={style.closeButton} aria-label="Cerrar modal">
+            <CloseIcon sx={{ fontSize: "2.2rem" }} />
+          </button>
+          <div className={style.content}>
+            <h2 className={style.titleText}>Introduzca el nombre de usuario</h2>
+            <InputField
+              id="redeem-code"
+              type="text"
+              value={friendName}
+              onChange={handleFriendNameChange}
+              placeholder="Nombre de usuario completo.."
+            />
+            <div className={style.actionButtonsContainer}>
+              <button onClick={onClose} className={style.actionButton}>
+                Cancelar
+              </button>
+              <button onClick={sendFriendRequest} className={`${style.actionButton}`}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    </>
+  );
+};
+
+const ContextMenu = ({ x, y, onDelete }: CustomContextMenuProps) => {
+  const handleDeleteClick = () => {
+    onDelete();
+  };
+
+  return (
+    <div
+      className={style.contextMenu}
+      style={{
+        position: "absolute",
+        top: y,
+        left: x,
+        zIndex: 1500,
+      }}
+    >
+      <p
+        onClick={handleDeleteClick}
+        style={{ cursor: "pointer", margin: "0px", padding: "5px 10px" }}
+      >
+        Eliminar amigo
+      </p>
+    </div>
+  );
+};
+
+const FriendModal = ({ open, onClose }: FriendModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
-
+  const [openFriendRequestModal, setOpenFriendRequestModal] = useState(false);
+  const [contextMenu, setContextMenu] = useState<ContextMenuProps>({
+    visible: false,
+    x: 0,
+    y: 0,
+    selectedFriend: null,
+  });
+  const modalBoxRef = useRef<HTMLElement>(null);
+  const handleOpenFriendRequestModal = () => setOpenFriendRequestModal(true);
+  const handleCloseFriendRequestModal = () => setOpenFriendRequestModal(false);
   const handleSearchTerm = (term: string) => setSearchTerm(term);
+
+  const handleFriendContextMenu = (event: React.MouseEvent, friend: User) => {
+    event.preventDefault();
+    if (modalBoxRef.current) {
+      const modalRect = modalBoxRef.current.getBoundingClientRect();
+      setContextMenu({
+        visible: true,
+        x: event.clientX - modalRect.left,
+        y: event.clientY - modalRect.top,
+        selectedFriend: friend,
+      });
+    }
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu((prev) => ({ ...prev, visible: false, selectedFriend: null }));
+  };
+
+  const handleDeleteFriend = () => {
+    if (contextMenu.selectedFriend) {
+      console.log("Eliminar amigo: ", contextMenu.selectedFriend.username);
+      // logica para eliminar a un amigo del usuario actual......
+    }
+    handleCloseContextMenu();
+  };
+
   const search = () => {
     const friendsSearched = exampleUserInitialData.friends.filter((friend) =>
       friend.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -52,6 +175,23 @@ export const FriendModal = ({ open, onClose }: FriendModalProps) => {
   };
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const targetElement = event.target as HTMLElement;
+      if (contextMenu.visible && !targetElement.closest(`.${style.contextMenu}`)) {
+        handleCloseContextMenu(); // Esta es ahora una nueva referencia de función en cada render
+      }
+    };
+
+    if (contextMenu.visible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [contextMenu.visible, handleCloseContextMenu]);
+
+  useEffect(() => {
     if (!searchTerm) {
       getCurrentUserFriends(exampleUserInitialData);
     }
@@ -65,7 +205,7 @@ export const FriendModal = ({ open, onClose }: FriendModalProps) => {
       aria-describedby="friends-modal-description"
       sx={{ zIndex: 1200 }}
     >
-      <Box className={style.muiModalBoxStyled}>
+      <Box ref={modalBoxRef} className={style.muiModalBoxStyled}>
         <button onClick={onClose} className={style.closeButton} aria-label="Cerrar modal">
           <CloseIcon sx={{ fontSize: "2.2rem" }} />
         </button>
@@ -101,7 +241,11 @@ export const FriendModal = ({ open, onClose }: FriendModalProps) => {
               onChange={(e) => handleSearchTerm(e.target.value)}
             />
           </div>
-          <button className={style.addFriendButtonStyled} aria-label="Añadir amigo">
+          <button
+            className={style.addFriendButtonStyled}
+            aria-label="Añadir amigo"
+            onClick={handleOpenFriendRequestModal}
+          >
             <AddFriendIconMUI
               sx={{
                 fontSize: "2.8rem",
@@ -118,7 +262,13 @@ export const FriendModal = ({ open, onClose }: FriendModalProps) => {
           {filteredFriends.length > 0 ? (
             <>
               {filteredFriends.map((friend) => (
-                <div key={friend.id} className={style.friendItemStyled}>
+                <div
+                  key={friend.id}
+                  className={style.friendItemStyled}
+                  onContextMenu={(e) => {
+                    handleFriendContextMenu(e, friend);
+                  }}
+                >
                   <div className={style.avatarContainer}>
                     <Avatar
                       sx={{
@@ -144,6 +294,15 @@ export const FriendModal = ({ open, onClose }: FriendModalProps) => {
             <p className={style.noFriendsMessage}>No se encontraron amigos.</p>
           )}
         </div>
+        <FriendRequestModal open={openFriendRequestModal} onClose={handleCloseFriendRequestModal} />
+        {contextMenu.visible && contextMenu.selectedFriend && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDeleteFriend}
+          />
+        )}
       </Box>
     </Modal>
   );
