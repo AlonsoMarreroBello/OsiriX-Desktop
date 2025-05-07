@@ -35,6 +35,17 @@
   border-right: none;
   color: var(--text-alternative);
   height: 3rem;
+  cursor: pointer;
+}
+
+.searchIcon:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.searchIcon:active {
+  background-color: var(--bg-primary);
+  color: var(--text-alternative);
 }
 
 .searchButton {
@@ -49,4 +60,14 @@
   font-size: 1rem;
   transition: background-color 0.3s ease;
   height: 3rem;
+}
+
+.searchButton:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.searchButton:active {
+  background-color: var(--bg-primary);
+  color: var(--text-alternative);
 }
