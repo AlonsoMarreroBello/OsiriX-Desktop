@@ -176,7 +176,7 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
       <InputField
         label="Fecha final"
         type="date"
-        id="startDate"
+        id="endDate"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
       />
