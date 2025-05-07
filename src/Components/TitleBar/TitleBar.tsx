@@ -4,14 +4,21 @@ import logo from "../../assets/bobCholo.jpeg";
 import { AddBoxOutlined, PeopleAlt, PublishOutlined, Settings } from "@mui/icons-material";
 import FriendModal from "../Modals/FriendModal/FriendModal";
 import SettingsModal from "../Modals/SettingsModal/SettingsModal";
+import RedeemModal from "../Modals/RedeemModal/RedeemModal";
+import { useNavigate } from "react-router-dom";
 export default function TitleBar() {
   const [isMaximized, setIsMaximized] = useState<boolean>(false);
   const [openFriendModal, setOpenFriendModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const [openRedeemModal, setOpenRedeemModal] = useState(false);
+  const navigate = useNavigate();
+
   const handleOpenFriendModal = () => setOpenFriendModal(true);
   const handleCloseFriendModal = () => setOpenFriendModal(false);
   const handleOpenSettingsModal = () => setOpenSettingsModal(true);
   const handleCloseSettingsModal = () => setOpenSettingsModal(false);
+  const handleOpenRedeemModal = () => setOpenRedeemModal(true);
+  const handleCloseRedeemModal = () => setOpenRedeemModal(false);
   useEffect(() => {
     window.electron.isMaximized(setIsMaximized);
   }, []);
@@ -38,7 +45,7 @@ export default function TitleBar() {
           </div>
           <div className={style.actionInnerContainer}>
             <AddBoxOutlined className={style.icon} />
-            <button>
+            <button onClick={handleOpenRedeemModal}>
               <p className={style.actionText}>Canjear</p>
             </button>
           </div>
@@ -64,6 +71,7 @@ export default function TitleBar() {
         </div>
         <FriendModal open={openFriendModal} onClose={handleCloseFriendModal} />
         <SettingsModal open={openSettingsModal} onClose={handleCloseSettingsModal} />
+        <RedeemModal open={openRedeemModal} onClose={handleCloseRedeemModal} />
       </div>
     </div>
   );
