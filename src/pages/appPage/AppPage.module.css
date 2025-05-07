@@ -1,0 +1,104 @@
+/* Variables de color (ajusta según tu tema) */
+:root {
+  --app-page-bg: #0a192f; /* Fondo general oscuro azulado */
+  --card-bg: #172a46; /* Fondo de las "tarjetas" o secciones */
+  --card-border: #243b55; /* Borde sutil si es necesario */
+  --text-primary-page: #ccd6f6; /* Texto principal claro */
+  --text-secondary-page: #8892b0; /* Texto secundario más tenue */
+  --accent-color-page: #64ffda; /* Color de acento (opcional) */
+  --image-placeholder-bg: #0f2e5a; /* Fondo oscuro para el contenedor de la imagen */
+}
+
+.appPageContainer {
+  padding: 20px;
+  background-color: var(--app-page-bg);
+  color: var(--text-primary-page);
+  min-height: 100vh; /* Para que ocupe toda la altura */
+}
+
+.appNameHeader {
+  margin-bottom: 25px !important; /* !important para MUI si es necesario */
+  text-align: left; /* Alineado a la izquierda como en la imagen */
+  font-weight: bold !important;
+  color: var(--text-primary-page);
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Columna izquierda más ancha */
+  gap: 25px; /* Espacio entre columnas y filas implícitas */
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Espacio entre elementos dentro de las columnas */
+}
+
+/* Estilo para Paper generalizado, si quieres que todas las secciones lo tengan */
+.detailsSection,
+.aboutSection,
+.friendsSection,
+.imageOuterContainer {
+  background-color: var(--card-bg) !important; /* Fondo de las tarjetas */
+  color: var(--text-primary-page) !important;
+  padding: 20px !important;
+  border-radius: 12px !important; /* Bordes redondeados como en la imagen */
+  /* border: 1px solid var(--card-border); */ /* Borde opcional */
+}
+
+.imageOuterContainer {
+  /* Este es el contenedor Paper que envuelve al contenedor de la imagen */
+  padding: 0 !important; /* Quitamos el padding para que el imageInnerContainer ocupe todo */
+  overflow: hidden; /* Para que el borde redondeado afecte al hijo */
+}
+
+.imageInnerContainer {
+  /* Este es el contenedor oscuro donde irá la imagen */
+  background-color: var(--image-placeholder-bg);
+  width: 100%;
+  aspect-ratio: 16 / 10; /* O la proporción que desees para la imagen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px; /* Para que los bordes redondeados se apliquen al contenido */
+}
+
+.appImage {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto; /* O width: 100%; height: 100%; object-fit: cover; */
+  height: auto; /* dependiendo de cómo quieras que se ajuste la imagen */
+  object-fit: contain; /* O 'cover' si prefieres que llene y recorte */
+  display: block; /* Para quitar espacio extra debajo si es img */
+  border-radius: 8px; /* Un ligero redondeo para la imagen misma si es más pequeña que el contenedor */
+}
+
+.aboutSection h2,
+.friendsSection h3 {
+  margin-bottom: 15px !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid var(--text-secondary-page); /* Línea divisoria */
+  padding-bottom: 8px;
+}
+
+.detailsSection p {
+  margin-bottom: 8px !important;
+  line-height: 1.6;
+}
+
+.detailsSection strong {
+  color: var(--text-secondary-page);
+  margin-right: 5px;
+}
+
+.friendsSection {
+  text-align: left; /* Alineación del título */
+}
+
+.customAvatar {
+  /* Para personalizar los avatares en AvatarGroup */
+  border: 2px solid var(--app-page-bg) !important; /* Borde que coincide con el fondo para efecto de superposición */
+  /* Puedes añadir más estilos aquí si es necesario */
+}
