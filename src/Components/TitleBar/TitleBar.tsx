@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import style from "./TitleBar.module.css";
-import logo from "../../assets/bobCholo.jpeg"
-import { AddBoxOutlined, ArrowCircleUp, ArrowUpward, PeopleAlt, Person2, PublishOutlined, Settings } from "@mui/icons-material";
+import logo from "../../assets/bobCholo.jpeg";
+import { AddBoxOutlined, PeopleAlt, PublishOutlined, Settings } from "@mui/icons-material";
+import FriendModal from "../Modals/FriendModal/FriendModal";
+import SettingsModal from "../Modals/SettingsModal/SettingsModal";
 export default function TitleBar() {
   const [isMaximized, setIsMaximized] = useState<boolean>(false);
-
+  const [openFriendModal, setOpenFriendModal] = useState(false);
+  const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const handleOpenFriendModal = () => setOpenFriendModal(true);
+  const handleCloseFriendModal = () => setOpenFriendModal(false);
+  const handleOpenSettingsModal = () => setOpenSettingsModal(true);
+  const handleCloseSettingsModal = () => setOpenSettingsModal(false);
   useEffect(() => {
     window.electron.isMaximized(setIsMaximized);
   }, []);
@@ -19,19 +26,27 @@ export default function TitleBar() {
           </div>
           <div className={style.actionInnerContainer}>
             <Settings className={style.icon} />
-            <button><p className={style.actionText}>Ajustes</p></button>
+            <button onClick={handleOpenSettingsModal}>
+              <p className={style.actionText}>Ajustes</p>
+            </button>
           </div>
           <div className={style.actionInnerContainer}>
             <PeopleAlt className={style.icon} />
-            <button><p className={style.actionText}>Amigos</p></button>
+            <button onClick={handleOpenFriendModal}>
+              <p className={style.actionText}>Amigos</p>
+            </button>
           </div>
           <div className={style.actionInnerContainer}>
             <AddBoxOutlined className={style.icon} />
-            <button><p className={style.actionText}>Canjear</p></button>
+            <button>
+              <p className={style.actionText}>Canjear</p>
+            </button>
           </div>
           <div className={style.actionInnerContainer}>
             <PublishOutlined className={style.icon} />
-            <button><p className={style.actionText}>Subir una aplicación</p></button>
+            <button>
+              <p className={style.actionText}>Subir una aplicación</p>
+            </button>
           </div>
         </div>
 
@@ -47,6 +62,8 @@ export default function TitleBar() {
           </button>
           <button onClick={() => window.electron.close()}>❌</button>
         </div>
+        <FriendModal open={openFriendModal} onClose={handleCloseFriendModal} />
+        <SettingsModal open={openSettingsModal} onClose={handleCloseSettingsModal} />
       </div>
     </div>
   );
