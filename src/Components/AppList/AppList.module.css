@@ -1,45 +1,9 @@
-.appList {
-  display: grid;
-  justify-content: center;
-  justify-items: center;
-  gap: 1rem;
-}
-
-.appOtherList {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  justify-content: center;
-  justify-items: center;
-  gap: 1rem;
-}
-
-.appMosaicList {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-content: center;
-  justify-items: center;
-  gap: 1rem;
-}
-
 .appsContainer {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 5rem;
   height: 48rem;
-}
-
-.searchBarContainer {
-  width: 50%;
-  align-self: center;
-}
-
-.filterControlsContainer {
-  display: flex;
-  flex-direction: column;
-  width: 70%;
-  gap: 1rem;
-  align-self: center;
+  width: 100%;
 }
 
 .listContainer {
@@ -52,4 +16,11 @@
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+.appList {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
 }
