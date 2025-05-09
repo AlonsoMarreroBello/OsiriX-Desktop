@@ -1,5 +1,7 @@
 export default interface User {
-  id: number;
+  id?: number;
+  email: string;
   username: string;
+  password: string;
   friends?: User[];
 }

@@ -1,35 +1,34 @@
 import SearchBar from "../../components/SearchBar/SearchBar";
 import style from "./LibraryPage.module.css";
-import { myDummyAppData as myApps } from "../../data/FakeData";
 import AppInfo from "../../interfaces/AppInfo";
 import { useEffect, useState } from "react";
 import AppList from "../..//components/AppList/AppList";
+import appService from "../../services/AppService";
+import authService from "../../services/AuthService";
 
 const LibraryPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredApps, setFilteredApps] = useState<AppInfo[]>([]);
-
+  const userId = authService.getUserIdFromToken();
   const handleSearchTerm = (term: string) => {
     setSearchTerm(term);
   };
 
   const search = () => {
-    const searchedApps = myApps.filter((app) =>
-      app.name.toLowerCase().includes(searchTerm.toLowerCase())
+    setFilteredApps((prev) =>
+      prev.filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-    setFilteredApps(searchedApps);
   };
 
-  const getAllUserApps = (myApps: AppInfo[]) => {
-    const allApps = myApps.filter((app) =>
-      app.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredApps(allApps);
+  const getAllUserApps = async () => {
+    console.log(userId);
+    const fetchedApps = await appService.getAppsByUserId(userId);
+    setFilteredApps(fetchedApps);
   };
 
   useEffect(() => {
     if (!searchTerm) {
-      getAllUserApps(myApps);
+      getAllUserApps();
     }
   }, [searchTerm]);
 

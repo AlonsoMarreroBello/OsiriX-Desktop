@@ -4,11 +4,14 @@ import GenericDropdown from "../GenericDropdown/GenericDropdown";
 import { useEffect, useRef, useState } from "react";
 import InputField from "../InputField/InputField";
 import { Category } from "../../interfaces/Category";
-import { allGameCategories, allAppCategories } from "../../data/FakeData";
 import { Checkbox, Radio } from "@mui/material";
+import categoryService from "../../services/CategoryService";
+import appService from "../../services/AppService";
+import AppInfo from "../../interfaces/AppInfo";
 
 interface FilterBarProps {
   handleViewMode: (mode: string) => void;
+  setApps: (apps: AppInfo[]) => void;
 }
 type CategoryTab = "games" | "apps";
 
@@ -23,7 +26,7 @@ const sortCriteriaOptions = [
   "Nombre de la app",
   "Última actualización",
 ];
-const FilterBar = ({ handleViewMode }: FilterBarProps) => {
+const FilterBar = ({ handleViewMode, setApps }: FilterBarProps) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   // Objeto para almacenar refs de botones y menús
   const dropdownRefs = {
@@ -32,8 +35,9 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
     sort: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
     view: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
   };
-  // useStates para manejar los filtros
+
   const [categoryTab, setCategoryTab] = useState<CategoryTab>("games");
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedGameCategories, setSelectedGameCategories] = useState<number[]>([]);
   const [selectedAppCategories, setSelectedAppCategories] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<string>("");
@@ -65,6 +69,10 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeDropdown]);
 
+  useEffect(() => {
+    categoryService.getCategories().then((categories) => setCategories(categories));
+  }, []);
+
   // --- Manejadores para filtros (cerrando los dropdowns tambien) ---
   const handleCategoryCheckboxChange = (categoryId: number, type: CategoryTab) => {
     const setter = type === "games" ? setSelectedGameCategories : setSelectedAppCategories;
@@ -72,8 +80,16 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     );
   };
-  const applyCategoryFilters = () => {
-    console.log("Nombre de las categorías aplicadas:", getCategories());
+  const applyCategoryFilters = async () => {
+    if (selectedGameCategories.length > 0) {
+      const fetchedApps = await appService.getAppsByCategoryIds(selectedGameCategories);
+      console.log(fetchedApps);
+      setApps(fetchedApps);
+    } else {
+      const fetchedApps = await appService.getApps();
+      setApps(fetchedApps);
+    }
+
     closeActiveDropdown();
   };
   const cancelCategoryFilters = () => closeActiveDropdown();
@@ -89,6 +105,7 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
       prev.includes(criteria) ? prev.filter((c) => c !== criteria) : [...prev, criteria]
     );
   };
+
   const applySortFilters = () => {
     console.log("Orden aplicado:", { sortBy: selectedSortBy, order: sortOrder });
     closeActiveDropdown();
@@ -98,21 +115,6 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
   const handleSelectViewOption = (mode: string) => {
     handleViewMode(mode);
     closeActiveDropdown();
-  };
-
-  const getCategories = () => {
-    const selectedCategories: Category[] = [];
-
-    const categoriesId = categoryTab === "games" ? allGameCategories : allAppCategories;
-
-    categoriesId.forEach((cat) => {
-      if (selectedGameCategories.includes(cat.categoryId)) {
-        selectedCategories.push(cat);
-      } else if (selectedAppCategories.includes(cat.categoryId)) {
-        selectedCategories.push(cat);
-      }
-    });
-    return selectedCategories;
   };
 
   // contenido de los dropdowns
@@ -134,7 +136,7 @@ const FilterBar = ({ handleViewMode }: FilterBarProps) => {
         </button>
       </div>
       <div className={mainStyle.checkboxGrid}>
-        {(categoryTab === "games" ? allGameCategories : allAppCategories).map((cat) => (
+        {categories.map((cat: Category) => (
           <label key={cat.categoryId} className={mainStyle.checkboxLabel}>
             <Checkbox
               checked={(categoryTab === "games"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import style from "./TitleBar.module.css";
-import logo from "../../assets/bobCholo.jpeg";
+import logo from "../../assets/osirix.png";
 import { AddBoxOutlined, PeopleAlt, PublishOutlined, Settings } from "@mui/icons-material";
 import FriendModal from "../Modals/FriendModal/FriendModal";
 import SettingsModal from "../Modals/SettingsModal/SettingsModal";
@@ -52,7 +52,9 @@ export default function TitleBar() {
           <div className={style.actionInnerContainer}>
             <PublishOutlined className={style.icon} />
             <button>
-              <p className={style.actionText}>Subir una aplicación</p>
+              <a href="#" className={style.actionText}>
+                Subir una aplicación
+              </a>
             </button>
           </div>
         </div>

@@ -4,7 +4,7 @@ import style from "./SearchBar.module.css";
 
 interface SearchBarProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
-  onSearch: () => void; // Callback para manejar la búsqueda
+  onSearch?: () => void; // quitar el ? despues
 }
 
 const SearchBar = ({ placeholder, onSearch, ...props }: SearchBarProps) => {

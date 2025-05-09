@@ -1,31 +1,19 @@
+import { Category } from "./Category";
+import DeveloperReseponseDto from "./Developer";
+import PublisherSimpleResponseDto from "./Publisher";
+
 export default interface AppInfo {
-  id: bigint | number | string;
+  appId: bigint | number | string;
+  publisher: PublisherSimpleResponseDto;
+  developer: DeveloperReseponseDto;
   name: string;
   version?: string;
   description?: string;
   downloads?: number;
-  categories?: string[];
-  releaseDate?: string | Date;
+  categories?: Category[];
   imgUrl?: string;
-}
-
-export interface FriendUser {
-  id: string | number;
-  username: string;
-  avatarUrl?: string; // URL a la imagen del avatar
-  initials?: string; // O iniciales si no hay avatarUrl
-}
-
-export interface AppData {
-  id: string | number;
-  name: string;
-  imageUrl: string; // URL de la imagen principal de la app
-  publisher: string;
-  developer: string;
-  releaseDate: string; // O podrías usar Date y formatearla
-  downloads: number;
-  currentVersion: string;
-  description: string;
-  friendsWhoHaveApp: FriendUser[];
-  downloadLink?: string; // Opcional, para el botón de descarga
+  isPublished: boolean;
+  isVisible: boolean;
+  isDownloadable: boolean;
+  publicationDate: Date;
 }

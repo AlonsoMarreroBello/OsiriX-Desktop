@@ -22,7 +22,9 @@ const HoverAppCard = ({ app, className, inlineStyle, ref }: HoverAppCardProps) =
           {app.categories && app.categories.length > 0 && (
             <div className={style.metaDataItem}>
               <Category className={style.metaDataIcon} />
-              <span className={style.metaDataText}>{app.categories.join(", ")}</span>
+              <span className={style.metaDataText}>
+                {app.categories.map((c) => c.categoryName).join(", ")}
+              </span>
             </div>
           )}
           {/* Contador de Descargas */}
@@ -33,10 +35,10 @@ const HoverAppCard = ({ app, className, inlineStyle, ref }: HoverAppCardProps) =
             </div>
           )}
           {/* Fecha  */}
-          {app.releaseDate && (
+          {app.publicationDate && (
             <div className={style.metaDataItem}>
               <CalendarMonth className={style.metaDataIcon} />
-              <span className={style.metaDataText}>{app.releaseDate.toString()}</span>
+              <span className={style.metaDataText}>{app.publicationDate.toLocaleString()}</span>
             </div>
           )}
         </div>

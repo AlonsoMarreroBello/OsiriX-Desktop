@@ -25,4 +25,5 @@ export const rendererConfig: Configuration = {
       src: path.resolve(__dirname, "src"),
     },
   },
+  devtool: "source-map",
 };

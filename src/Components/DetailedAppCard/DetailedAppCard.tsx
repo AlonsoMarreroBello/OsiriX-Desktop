@@ -3,18 +3,20 @@ import AppInfo from "../../interfaces/AppInfo";
 import styles from "./DetailedAppCard.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 interface DetailedAppCardProps {
   app: AppInfo;
 }
 
 const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
+  const navigate = useNavigate();
   const pressed = () => {
     console.log("presionao");
   };
   return (
     <div className={styles.container}>
-      <a href="https://guthib.com/" className={styles.mainLinkArea}>
+      <a onClick={() => navigate(`/app/${app.appId}`)} className={styles.mainLinkArea}>
         <img src={app.imgUrl} alt={`${app.name} icon`} className={styles.icon} loading="lazy" />
         <div className={styles.contentWrapper}>
           <div className={styles.titleWrapper}>
@@ -24,14 +26,16 @@ const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
 
           <div className={styles.dataWrapper}>
             <CalendarMonth className={styles.metaDataIcon} />
-            <span className={styles.dataText}>{app.releaseDate.toLocaleString()}</span>
+            <span className={styles.dataText}>{app.publicationDate.toLocaleString()}</span>
             <Download className={styles.metaDataIcon} />
             <span className={styles.dataText}>{app.downloads}</span>
             <Category className={styles.metaDataIcon} />
             {app.categories.length > 1 ? (
-              <span className={styles.dataText}>{app.categories.join(", ")}</span>
+              <span className={styles.dataText}>
+                {app.categories.map((c) => c.categoryName).join(", ")}
+              </span>
             ) : (
-              <span className={styles.dataText}>{app.categories}</span>
+              <span className={styles.dataText}>{app.categories[0].categoryName}</span>
             )}
 
             <span className={styles.versionText}>Version {app.version}</span>

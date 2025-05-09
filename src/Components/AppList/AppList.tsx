@@ -44,7 +44,7 @@ const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
       case "mosaico":
         return (
           <BasicAppCard
-            key={app.id}
+            key={app.appId}
             app={app}
             onHover={handleMouseEnter}
             onLeave={handleMouseLeave}
@@ -53,18 +53,18 @@ const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
       case "lista":
         return (
           <ExtendedAppCard
-            key={app.id}
+            key={app.appId}
             app={app}
             onHover={handleMouseEnter}
             onLeave={handleMouseLeave}
           />
         );
       case "detalles":
-        return <DetailedAppCard key={app.id} app={app} />;
+        return <DetailedAppCard key={app.appId} app={app} />;
       default:
         return (
           <BasicAppCard
-            key={app.id}
+            key={app.appId}
             app={app}
             onHover={handleMouseEnter}
             onLeave={handleMouseLeave}

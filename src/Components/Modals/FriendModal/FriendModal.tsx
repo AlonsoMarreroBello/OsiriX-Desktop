@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import User from "../../../interfaces/User";
 import InputField from "../../../components/InputField/InputField";
+import authService from "../../../services/AuthService";
 
 interface FriendModalProps {
   open: boolean;
@@ -27,16 +28,6 @@ interface ContextMenuProps {
   y: number;
   selectedFriend: User | null;
 }
-
-const exampleFriendsInitialData: User[] = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  username: `Amigo ${i + 1}`,
-}));
-const exampleUserInitialData: User = {
-  id: 1,
-  username: "nombredeusuario",
-  friends: exampleFriendsInitialData,
-};
 
 const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
   const [friendName, setFriendName] = useState<string>("");
@@ -122,6 +113,7 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     y: 0,
     selectedFriend: null,
   });
+  const username = authService.getUsernameFromToken();
   const modalBoxRef = useRef<HTMLElement>(null);
   const handleOpenFriendRequestModal = () => setOpenFriendRequestModal(true);
   const handleCloseFriendRequestModal = () => setOpenFriendRequestModal(false);
@@ -152,12 +144,9 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     handleCloseContextMenu();
   };
 
-  const search = () => {
-    const friendsSearched = exampleUserInitialData.friends.filter((friend) =>
-      friend.username.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredFriends(friendsSearched);
-  };
+  // const search = () => {
+
+  // };
 
   const getCurrentUserFriends = (currentUser: User) => {
     const friends = currentUser.friends || [];
@@ -166,7 +155,7 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
 
   const getInitials = (name: string): string => {
     if (!name) return "?";
-    const words = name.trim().split(/\s+/); // Dividir por cualquier espacio y quitar espacios extra
+    const words = name.trim().split(/\s+/);
     if (words.length === 0 || words[0] === "") return "?";
     if (words.length > 1 && words[1] !== "") {
       return `${words[0][0]}${words[1][0]}`.toUpperCase();
@@ -191,11 +180,11 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     };
   }, [contextMenu.visible, handleCloseContextMenu]);
 
-  useEffect(() => {
-    if (!searchTerm) {
-      getCurrentUserFriends(exampleUserInitialData);
-    }
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   if (!searchTerm) {
+  //     getCurrentUserFriends(exampleUserInitialData);
+  //   }
+  // }, [searchTerm]);
 
   return (
     <Modal
@@ -221,7 +210,7 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
               marginBottom: "5px",
             }}
           >
-            {getInitials(exampleUserInitialData.username)}
+            {getInitials(username)}
           </Avatar>
           <Typography
             variant="h6"
@@ -229,14 +218,14 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
             id="friends-modal-title"
             className={style.currentUsername}
           >
-            {exampleUserInitialData.username}
+            {username}
           </Typography>
         </div>
         <div className={style.searchAndAddContainer}>
           <div className={style.searchBarWrapper}>
             <SearchBar
               placeholder="Amigo1..."
-              onSearch={search}
+              // onSearch={search}
               value={searchTerm}
               onChange={(e) => handleSearchTerm(e.target.value)}
             />

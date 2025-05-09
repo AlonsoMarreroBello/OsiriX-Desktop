@@ -3,6 +3,7 @@ import AppInfo from "../../interfaces/AppInfo";
 import styles from "./ExtendedAppCard.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 interface ExtendedAppCardProps {
   app: AppInfo;
@@ -11,13 +12,14 @@ interface ExtendedAppCardProps {
 }
 
 const ExtendedAppCard = ({ app, onHover, onLeave }: ExtendedAppCardProps) => {
+  const navigate = useNavigate();
   return (
     <div
       className={styles.container}
       onMouseEnter={(e) => onHover(e, app)}
       onMouseLeave={() => onLeave()}
     >
-      <a href="https://guthib.com/" className={styles.mainLinkArea}>
+      <a onClick={() => navigate(`/app/${app.appId}`)} className={styles.mainLinkArea}>
         <img src={app.imgUrl} alt={`${app.name} icon`} className={styles.icon} />
         <div className={styles.contentWrapper}>
           <div className={styles.titleWrapper}>
@@ -29,9 +31,11 @@ const ExtendedAppCard = ({ app, onHover, onLeave }: ExtendedAppCardProps) => {
           <div className={styles.dataWrapper}>
             <Category className={styles.metaDataIcon} />
             {app.categories.length > 1 ? (
-              <span className={styles.dataText}>{app.categories.join(", ")}</span>
+              <span className={styles.dataText}>
+                {app.categories.map((c) => c.categoryName).join(", ")}
+              </span>
             ) : (
-              <span className={styles.dataText}>{app.categories}</span>
+              <span className={styles.dataText}>{app.categories[0].categoryName}</span>
             )}
           </div>
         </div>
