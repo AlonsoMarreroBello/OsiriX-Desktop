@@ -20,6 +20,7 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
+      loggerPort: 3001,
       mainConfig,
       renderer: {
         config: rendererConfig,
