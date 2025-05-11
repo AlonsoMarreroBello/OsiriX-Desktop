@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld("electron", {
   isMaximized: (callback: (maximized: boolean) => void) => {
     ipcRenderer.on("window:isMaximized", (_, maximized: boolean) => callback(maximized));
   },
+  sendLoginSuccess: () => ipcRenderer.send("login-successful"),
+  requestLogout: () => ipcRenderer.send("logout-requested"),
 });
 
 declare global {
@@ -20,6 +22,8 @@ declare global {
       maximize: () => void;
       close: () => void;
       isMaximized: (callback: (maximized: boolean) => void) => void;
+      sendLoginSuccess: () => void;
+      requestLogout: () => void;
     };
   }
 }

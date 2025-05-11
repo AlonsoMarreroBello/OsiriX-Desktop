@@ -36,6 +36,7 @@ const App = () => {
   }, []);
 
   if (isLoggedIn) {
+    window.electron.sendLoginSuccess();
     return (
       <>
         <TitleBar />
@@ -50,6 +51,7 @@ const App = () => {
       </>
     );
   } else {
+    window.electron.requestLogout();
     return (
       <Routes>
         <Route path="/auth" element={<AuthPage onLoginSuccess={handleLoginSuccess} />} />
