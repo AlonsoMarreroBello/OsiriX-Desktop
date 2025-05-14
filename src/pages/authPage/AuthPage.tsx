@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import InputField from "../../components/InputField/InputField";
 import styles from "./AuthPage.module.css";
 import { Button } from "@mui/material";
@@ -39,7 +39,8 @@ const AuthPage = ({ onLoginSuccess }: AuthPageProps) => {
   };
   const passChecked = user.password == checkPassword ? true : false;
 
-  const handleAuth = async () => {
+  const handleAuth = async (e: FormEvent) => {
+    e.preventDefault();
     try {
       if (wantsToRegister) {
         console.log(user, "register");
@@ -48,10 +49,12 @@ const AuthPage = ({ onLoginSuccess }: AuthPageProps) => {
         console.log(user, "log");
         await authService.login({ ...user, origin: "DESKTOP" });
       }
-      if (authService.getToken()) {
-        onLoginSuccess();
-        navigate("/");
-      }
+      setTimeout(() => {
+        if (authService.getToken()) {
+          onLoginSuccess();
+          navigate("/");
+        }
+      }, 1000);
     } catch (error) {
       console.error(error);
     }
