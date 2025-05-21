@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AppInfo from "../../interfaces/AppInfo";
 import styles from "./AppList.module.css";
 import BasicAppCard from "../BasicAppCard/BasicAppCard";
 import ExtendedAppCard from "../ExtendedAppCard/ExtendedAppCard";
 import DetailedAppCard from "../DetailedAppCard/DetailedAppCard";
-import SearchBar from "../SearchBar/SearchBar";
-import FilterBar, { ViewMode } from "../FilterBar/FilterBar";
+
 import HoverAppCard from "../HoverAppCard/HoverAppCard";
 import hoverCardStyle from "../HoverAppCard/HoverAppCard.module.css";
+import { ViewMode } from "../../models/FilterModel";
 
 interface AppListProps {
   apps: AppInfo[];
@@ -18,6 +18,7 @@ interface AppListProps {
 interface CardPosition {
   top: number;
   left: number;
+  right?: number;
 }
 const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
   const [hoveredApp, setHoveredApp] = useState<AppInfo | null>(null);
@@ -77,40 +78,47 @@ const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
     if (hoveredApp && initialCardPosition && hoverCardRef.current) {
       const cardElement = hoverCardRef.current;
       const cardHeight = cardElement.offsetHeight;
+      const cardWidth = cardElement.offsetWidth;
       const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
 
       let newTop = initialCardPosition.top;
-      const newLeft = initialCardPosition.left;
+      let newLeft = initialCardPosition.left;
 
       const margin = 20;
 
-      // Posición actual del tope de la pagina y el bottom acorde a la posicion de la tajertita
       const currentCardTopPage = initialCardPosition.top;
       const currentCardBottomPage = currentCardTopPage + cardHeight;
 
-      // Límite inferior visible del viewport y el límite superior visible del viewport de la página
       const viewportBottomPage = window.scrollY + viewportHeight - margin;
       const viewportTopPage = window.scrollY + margin;
 
       if (currentCardBottomPage > viewportBottomPage) {
         newTop = viewportBottomPage - cardHeight;
       }
+
       if (newTop < viewportTopPage) {
         newTop = viewportTopPage;
       }
 
-      // Evitar re renderizados en caso de que no haya cambios en la posicion..
+      const currentCardRightPage = initialCardPosition.left + cardWidth;
+      const viewportRightPage = viewportWidth - margin;
+
+      if (currentCardRightPage > viewportRightPage) {
+        newLeft = viewportRightPage - cardWidth;
+      }
+
       if (newTop !== adjustedCardPosition?.top || newLeft !== adjustedCardPosition?.left) {
         setAdjustedCardPosition({ top: newTop, left: newLeft });
       }
     }
-  }, [hoveredApp, initialCardPosition]);
+  }, [hoveredApp, initialCardPosition, adjustedCardPosition]);
 
   return (
     <div className={styles.appsContainer}>
       <div className={styles.listContainer}>
         <div className={`${checkViewMode()} ${styles.appList}`}>
-          {apps.map((app) => renderApps(app))}
+          {apps.length > 0 ? apps.map((app) => renderApps(app)) : <div>No hay aplicaciones</div>}
         </div>
       </div>
       {hoveredApp && adjustedCardPosition && (

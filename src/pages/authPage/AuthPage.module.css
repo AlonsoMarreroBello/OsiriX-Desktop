@@ -1,121 +1,201 @@
-/* src/screens/LoginScreen/LoginScreen.module.css */
 .container {
   display: flex;
   min-height: 100vh;
-  /* O ajusta a la altura deseada */
   width: 100%;
-  background-color: #f0f0f0;
-  /* Color de fondo general si es necesario */
-  font-family: sans-serif;
-  /* O la fuente que prefieras */
+  background-color: var(--color-bg-primary);
+  overflow: hidden;
+  position: relative;
 }
 
-/* Panel Izquierdo */
-.leftPanel {
+/* --- Paneles --- */
+.leftPanel,
+.rightPanel {
   flex: 1;
-  /* Ocupa la mitad del espacio */
-  background-color: #adb5bd;
-  /* Gris claro */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  position: relative;
-  /* Para posicionar elementos si es necesario */
+  transition:
+    transform 0.6s cubic-bezier(0.65, 0, 0.35, 1),
+    z-index 0s linear 0.6s;
+  height: 100vh;
+  box-sizing: border-box;
+  position: absolute;
+  width: 50%;
+  top: 0;
 }
 
+.leftPanel {
+  background-color: var(--color-bg-secondary);
+  left: 0;
+  transform: translateX(0%);
+  z-index: 12;
+}
+
+.rightPanel {
+  background-color: var(--color-bg-primary);
+  right: 0;
+  transform: translateX(0%);
+  z-index: 5;
+}
+
+.leftPanel.leftPanelShifted {
+  transform: translateX(100%);
+  z-index: 12;
+}
+
+.rightPanel.rightPanelShifted {
+  transform: translateX(-100%);
+  z-index: 10;
+}
+
+/* --- Panel Izquierdo --- */
 .logo {
-  max-width: 250px;
-  /* Ajusta el tamaño del logo */
+  max-width: 200px;
   height: auto;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 15px var(--color-accent-pastel-shadow));
 }
 
 .quote {
-  font-size: 1.2rem;
-  color: #343a40;
-  /* Color oscuro para la frase */
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
   font-style: italic;
-  /* Cursiva como en la imagen */
   text-align: center;
+  max-width: 300px;
 }
 
-/* Panel Derecho */
-.rightPanel {
-  flex: 1;
-  /* Ocupa la otra mitad */
-  background-color: #0d2a4d;
-  /* Azul oscuro */
+/* --- Panel Derecho (formularios) --- */
+.formWrapper {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
-  color: #ffffff;
-  /* Texto blanco por defecto en este panel */
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition:
+    opacity 0.4s ease-in-out 0.4s,
+    transform 0.4s ease-in-out 0.4s,
+    visibility 0s linear 0.8s;
 }
 
+/* Mostrar formulario activo */
+.rightPanel .loginForm,
+.rightPanel.rightPanelShifted .registerForm {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition-delay: 0.4s;
+}
+
+/* Ocultar formulario inactivo */
+.rightPanel.rightPanelShifted .loginForm,
+.rightPanel .registerForm:not(.rightPanel.rightPanelShifted .registerForm) {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out,
+    visibility 0.6s linear 0.3s;
+  transition-delay: 0s;
+}
+
+/* Estado base por defecto */
+.rightPanel .loginForm {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 10;
+  transition-delay: 0s;
+}
+
+.rightPanel .registerForm {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 5;
+  transition-delay: 0s;
+}
+
+.rightPanel.rightPanelShifted .loginForm {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  z-index: 5;
+  transition-delay: 0s;
+}
+
+.rightPanel.rightPanelShifted .registerForm {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 10;
+  transition-delay: 0.4s;
+}
+
+/* --- Formulario --- */
 .formContainer {
   width: 100%;
-  max-width: 400px;
-  /* Ancho máximo del formulario */
+  max-width: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 2rem;
+  border-radius: var(--border-radius-large);
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  padding: 10px 25px;
-  border: 2px solid #ffffff;
-  /* Borde blanco */
-  border-radius: 15px;
-  /* Esquinas redondeadas */
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+  color: var(--color-text-primary);
+  padding: 0.6rem 1.5rem;
+  border: 2px solid var(--color-accent-pastel-border);
+  border-radius: var(--border-radius-medium);
   text-align: center;
-  background-color: #0d2a4d;
-  /* Mismo fondo que el panel */
 }
 
 .form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  /* Centra el botón */
+  gap: 0.2rem;
 }
 
 .forgotPassword {
-  color: #ffffff;
-  font-size: 0.9rem;
+  color: var(--color-accent-pastel-text-link);
+  font-size: 0.85rem;
   text-decoration: none;
-  margin-top: -1rem;
-  /* Acércalo al campo de contraseña */
+  margin-top: 0.5rem;
   margin-bottom: 1.5rem;
   align-self: flex-start;
-  /* Alínealo a la izquierda */
-  padding-left: 5px;
-  /* Pequeño ajuste visual */
 }
 
 .forgotPassword:hover {
   text-decoration: underline;
 }
 
-.registerLink {
-  margin-top: 2rem;
+.toggleLink {
+  margin-top: 2.5rem;
   font-size: 0.9rem;
   text-align: center;
+  color: var(--color-text-secondary);
 }
 
-.registerLink a {
-  color: #a0d8ef;
-  /* Azul claro para el enlace */
+.toggleLink a {
+  color: var(--color-accent-pastel-main);
   font-weight: bold;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.registerLink a:hover {
+.toggleLink a:hover {
   text-decoration: underline;
 }

@@ -1,104 +1,118 @@
 /* eslint-disable no-unused-vars */
-import mainStyle from "./FilterBar.module.css";
-import GenericDropdown from "../GenericDropdown/GenericDropdown";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import mainStyle from "./FilterBar.module.css"; // Estilos para el .container y otros elementos no MUI
 import InputField from "../InputField/InputField";
 import { Category } from "../../interfaces/Category";
-import { Checkbox, Radio } from "@mui/material";
+import { Checkbox, Radio, Button, Menu, MenuItem } from "@mui/material"; // Box es opcional si no lo usas para el container
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
+import ViewComfyIcon from "@mui/icons-material/ViewComfy";
+import ViewListIcon from "@mui/icons-material/ViewList";
 import categoryService from "../../services/CategoryService";
 import appService from "../../services/AppService";
 import AppInfo from "../../interfaces/AppInfo";
+import {
+  CategoryTab,
+  sortCriteriaOptions,
+  SortOrderOption,
+  sortOrderOptions,
+  commonFilterButtonSx,
+  commonFilterButtonActiveSx,
+  menuPaperProps,
+  viewOptions,
+  ViewMode,
+} from "../../models/FilterModel";
+import { GridView } from "@mui/icons-material";
 
 interface FilterBarProps {
+  viewMode: ViewMode;
   handleViewMode: (mode: string) => void;
   setApps: (apps: AppInfo[]) => void;
 }
-type CategoryTab = "games" | "apps";
 
-export type ViewMode = "mosaico" | "lista" | "detalles";
+const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
+  const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
+  const [anchorElDate, setAnchorElDate] = useState<null | HTMLElement>(null);
+  const [anchorElSort, setAnchorElSort] = useState<null | HTMLElement>(null);
+  const [anchorElView, setAnchorElView] = useState<null | HTMLElement>(null);
 
-const sortOrderOptions = ["Ascendente", "Descendente", "sHufFle"];
-
-const sortCriteriaOptions = [
-  "Fecha de lanzamiento",
-  "Descargas",
-  "Tamaño de archivo",
-  "Nombre de la app",
-  "Última actualización",
-];
-const FilterBar = ({ handleViewMode, setApps }: FilterBarProps) => {
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  // Objeto para almacenar refs de botones y menús
-  const dropdownRefs = {
-    category: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
-    date: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
-    sort: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
-    view: { button: useRef<HTMLButtonElement>(null), menu: useRef<HTMLDivElement>(null) },
-  };
-
-  const [categoryTab, setCategoryTab] = useState<CategoryTab>("games");
+  const [categoryTab, setCategoryTab] = useState<CategoryTab>("GAME");
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedGameCategories, setSelectedGameCategories] = useState<number[]>([]);
   const [selectedAppCategories, setSelectedAppCategories] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [selectedSortBy, setSelectedSortBy] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState("");
+  const [sortOrder, setSortOrder] = useState<string>(sortOrderOptions[0]?.value || "asc");
 
-  const toggleDropdown = (dropdownName: string) => {
-    setActiveDropdown((prev) => (prev === dropdownName ? null : dropdownName));
+  const handleOpenMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    setter: React.Dispatch<React.SetStateAction<HTMLElement | null>>
+  ) => {
+    setter(event.currentTarget);
   };
-  const closeActiveDropdown = () => setActiveDropdown(null);
+  const handleCloseMenu = (setter: React.Dispatch<React.SetStateAction<HTMLElement | null>>) => {
+    setter(null);
+  };
 
-  // manejar el cierre de los dropdowns al hacer clic fuera de ellos
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!activeDropdown) return;
-      const currentRefs = dropdownRefs[activeDropdown as keyof typeof dropdownRefs];
-      if (
-        currentRefs &&
-        currentRefs.menu.current &&
-        !currentRefs.menu.current.contains(event.target as Node) &&
-        currentRefs.button.current &&
-        !currentRefs.button.current.contains(event.target as Node)
-      ) {
-        closeActiveDropdown();
-      }
-    };
-    if (activeDropdown) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [activeDropdown]);
+  const getCategories = async () => {
+    try {
+      const allCategories = await categoryService.getCategories();
+      const filteredCats = allCategories.filter((cat) =>
+        categoryTab === "GAME" ? cat.categoryType === "GAME" : cat.categoryType === "APP"
+      );
+      setCategories(filteredCats);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategories([]);
+    }
+  };
 
   useEffect(() => {
-    categoryService.getCategories().then((categories) => setCategories(categories));
-  }, []);
+    getCategories();
+  }, [categoryTab]);
 
-  // --- Manejadores para filtros (cerrando los dropdowns tambien) ---
-  const handleCategoryCheckboxChange = (categoryId: number, type: CategoryTab) => {
-    const setter = type === "games" ? setSelectedGameCategories : setSelectedAppCategories;
-    setter((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
+  const handleCategoryTabs = (tab: CategoryTab) => {
+    setCategoryTab(tab);
+  };
+
+  const handleCategoryCheckboxChange = (categoryId: number) => {
+    const currentSelected = categoryTab === "GAME" ? selectedGameCategories : selectedAppCategories;
+    const setter = categoryTab === "GAME" ? setSelectedGameCategories : setSelectedAppCategories;
+    setter(
+      currentSelected.includes(categoryId)
+        ? currentSelected.filter((id) => id !== categoryId)
+        : [...currentSelected, categoryId]
     );
   };
+
   const applyCategoryFilters = async () => {
-    if (selectedGameCategories.length > 0) {
-      const fetchedApps = await appService.getAppsByCategoryIds(selectedGameCategories);
-      console.log(fetchedApps);
+    const idsToFilter = categoryTab === "GAME" ? selectedGameCategories : selectedAppCategories;
+    try {
+      let fetchedApps: AppInfo[];
+      if (idsToFilter.length > 0) {
+        fetchedApps = await appService.getAppsByCategoryIds(idsToFilter);
+      } else {
+        fetchedApps = await appService.getApps();
+      }
       setApps(fetchedApps);
-    } else {
-      const fetchedApps = await appService.getApps();
-      setApps(fetchedApps);
+    } catch (error) {
+      console.error("Error applying category filters:", error);
+      const fallbackApps = await appService.getApps();
+      setApps(fallbackApps);
     }
-
-    closeActiveDropdown();
+    handleCloseMenu(setAnchorElCategory);
   };
-  const cancelCategoryFilters = () => closeActiveDropdown();
 
-  const applyDateFilters = () => {
-    console.log("Fechas aplicadas:", { startDate, endDate });
-    closeActiveDropdown();
+  const cancelCategoryFilters = () => handleCloseMenu(setAnchorElCategory);
+
+  const applyDateFilters = async () => {
+    console.log("Applying date filters (simulated):", { startDate, endDate });
+    // TODO: Implementar servicio real
+    handleCloseMenu(setAnchorElDate);
   };
-  const cancelDateFilters = () => closeActiveDropdown();
+  const cancelDateFilters = () => handleCloseMenu(setAnchorElDate);
 
   const handleSortByCheckboxChange = (criteria: string) => {
     setSelectedSortBy((prev) =>
@@ -106,141 +120,89 @@ const FilterBar = ({ handleViewMode, setApps }: FilterBarProps) => {
     );
   };
 
-  const applySortFilters = () => {
-    console.log("Orden aplicado:", { sortBy: selectedSortBy, order: sortOrder });
-    closeActiveDropdown();
+  const applySortFilters = async () => {
+    console.log("Applying sort filters (simulated):", { sortBy: selectedSortBy, order: sortOrder });
+    // TODO: Implementar servicio real
+    handleCloseMenu(setAnchorElSort);
   };
-  const cancelSortFilters = () => closeActiveDropdown();
+  const cancelSortFilters = () => handleCloseMenu(setAnchorElSort);
 
   const handleSelectViewOption = (mode: string) => {
     handleViewMode(mode);
-    closeActiveDropdown();
+    handleCloseMenu(setAnchorElView);
   };
 
-  // contenido de los dropdowns
+  const handleViewIcon = (mode: string) => {
+    switch (mode) {
+      case "mosaico":
+        return <GridView />;
+      case "lista":
+        return <ViewComfyIcon />;
+      case "detalles":
+        return <ViewListIcon />;
+      default:
+        return <AutoAwesomeMosaicIcon />;
+    }
+  };
+  // --- Contenido de los Dropdowns (sin cambios aquí) ---
   const categoryDropdownContent = (
     <div className={mainStyle.dropdownContent}>
+      {" "}
+      {/* Clase específica para este dropdown */}
       <div className={mainStyle.categoryTabs}>
         <button
-          className={`${mainStyle.tabButton} ${categoryTab === "games" ? mainStyle.activeTab : ""}`}
-          onClick={() => setCategoryTab("games")}
+          className={`${mainStyle.tabButton} ${categoryTab === "GAME" ? mainStyle.activeTab : ""}`}
+          onClick={() => handleCategoryTabs("GAME")}
         >
           Juegos
         </button>
-        <div className={mainStyle.borderTab}></div>
         <button
-          className={`${mainStyle.tabButton} ${categoryTab === "apps" ? mainStyle.activeTab : ""}`}
-          onClick={() => setCategoryTab("apps")}
+          className={`${mainStyle.tabButton} ${categoryTab === "APP" ? mainStyle.activeTab : ""}`}
+          onClick={() => handleCategoryTabs("APP")}
         >
           Aplicaciones
         </button>
       </div>
-      <div className={mainStyle.checkboxGrid}>
-        {categories.map((cat: Category) => (
-          <label key={cat.categoryId} className={mainStyle.checkboxLabel}>
-            <Checkbox
-              checked={(categoryTab === "games"
-                ? selectedGameCategories
-                : selectedAppCategories
-              ).includes(cat.categoryId)}
-              onChange={() => handleCategoryCheckboxChange(cat.categoryId, categoryTab)}
-              sx={{
-                color: "var(--text-primary)",
-                "&.Mui-checked": {
-                  color: "var(--text-alternative)",
-                },
-              }}
-            />
-            {cat.categoryName}
-          </label>
-        ))}
-      </div>
-      <div className={mainStyle.dropdownActions}>
-        <button onClick={cancelCategoryFilters} className={mainStyle.actionButton}>
-          Cancelar
-        </button>
-        <button onClick={applyCategoryFilters} className={`${mainStyle.actionButton}`}>
-          Aplicar Filtros
-        </button>
-      </div>
-    </div>
-  );
-
-  const dateDropdownContent = (
-    <div className={mainStyle.dropdownContent}>
-      <InputField
-        label="Fecha de Inicio"
-        type="date"
-        id="startDate"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-      />
-      <InputField
-        label="Fecha final"
-        type="date"
-        id="endDate"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-      />
-      <div className={mainStyle.dropdownActions}>
-        <button onClick={cancelDateFilters} className={mainStyle.actionButton}>
-          Cancelar
-        </button>
-        <button onClick={applyDateFilters} className={`${mainStyle.actionButton}`}>
-          Aplicar Filtros
-        </button>
-      </div>
-    </div>
-  );
-
-  const sortDropdownContent = (
-    <div className={mainStyle.dropdownContent}>
-      <div className={mainStyle.sortSectionsContainer}>
-        <div className={mainStyle.sortCriteriaSection}>
-          {sortCriteriaOptions.map((crit) => (
-            <label key={crit} className={mainStyle.checkboxLabel}>
+      <div className={mainStyle.checkboxGridCategory}>
+        {" "}
+        {/* Clase específica para el grid de este dropdown */}
+        {categories.length > 0 ? (
+          categories.map((cat: Category) => (
+            <label key={cat.categoryId} className={mainStyle.checkboxLabelStyled}>
               <Checkbox
-                checked={selectedSortBy.includes(crit)}
-                onChange={() => handleSortByCheckboxChange(crit)}
+                checked={(categoryTab === "GAME"
+                  ? selectedGameCategories
+                  : selectedAppCategories
+                ).includes(cat.categoryId)}
+                onChange={() => handleCategoryCheckboxChange(cat.categoryId)}
                 sx={{
-                  color: "var(--text-primary)",
-                  "&.Mui-checked": {
-                    color: "var(--text-alternative)",
-                  },
+                  padding: "4px",
+                  color: "var(--color-text-primary)", // O una variable más específica para texto de control
+                  "&.Mui-checked": { color: "var(--color-accent-pastel-main)" },
+                  "& .MuiSvgIcon-root": { fontSize: "1.2rem" },
                 }}
               />
-              {crit}
+              <span className={mainStyle.checkboxText}>{cat.categoryName}</span>
             </label>
-          ))}
-        </div>
-        <div className={mainStyle.borderTab}></div>
-        <div className={mainStyle.sortOrderSection}>
-          {sortOrderOptions.map((order) => (
-            <label key={order.toLowerCase()} className={mainStyle.radioLabel}>
-              <Radio
-                checked={sortOrder === order.toLowerCase()}
-                onChange={() => setSortOrder(order.toLowerCase())}
-                sx={{
-                  color: "var(--text-primary)",
-                  "&.Mui-checked": {
-                    color: "var(--text-alternative)",
-                  },
-                  "& .MuiSvgIcon-root": {
-                    fontSize: "1.5rem",
-                  },
-                }}
-              />
-              {order}
-            </label>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p className={mainStyle.noItemsMessageFullWidth}>
+            No hay categorías {categoryTab === "GAME" ? "de juegos" : "de aplicaciones"}{" "}
+            disponibles.
+          </p>
+        )}
       </div>
       <div className={mainStyle.dropdownActions}>
-        <button onClick={cancelSortFilters} className={mainStyle.actionButton}>
+        {" "}
+        {/* Clase específica para acciones de este dropdown */}
+        <button
+          onClick={cancelCategoryFilters}
+          className={`${mainStyle.actionButton} ${mainStyle.cancelButton}`}
+        >
           Cancelar
         </button>
         <button
-          onClick={applySortFilters}
+          onClick={applyCategoryFilters}
           className={`${mainStyle.actionButton} ${mainStyle.applyButton}`}
         >
           Aplicar Filtros
@@ -249,73 +211,232 @@ const FilterBar = ({ handleViewMode, setApps }: FilterBarProps) => {
     </div>
   );
 
-  const viewDropdownContent = (
-    <>
-      {["Mosaico", "Lista", "Detalles"].map((viewMode, index) => (
+  const dateDropdownContent = (
+    <div className={mainStyle.dropdownContent}>
+      {/* ... tu contenido ... */}
+      <div className={mainStyle.dateInputWrapper}>
+        <InputField
+          label="Fecha de Inicio"
+          type="date"
+          id="startDate"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <InputField
+          label="Fecha final"
+          type="date"
+          id="endDate"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
+      <div className={mainStyle.dropdownActions}>
         <button
-          key={index}
-          value={viewMode.toLowerCase().replace(" ", "")}
-          className={mainStyle.dropdownItem}
-          onClick={(e) => handleSelectViewOption(e.currentTarget.value)}
+          onClick={cancelDateFilters}
+          className={`${mainStyle.actionButton} ${mainStyle.cancelButton}`}
         >
-          {viewMode}
+          Cancelar
         </button>
-      ))}
-    </>
+        <button
+          onClick={applyDateFilters}
+          className={`${mainStyle.actionButton} ${mainStyle.applyButton}`}
+        >
+          Aplicar Fechas
+        </button>
+      </div>
+    </div>
   );
+
+  const sortDropdownContent = (
+    // No es necesario un wrapper div adicional si .dropdownContent ya da el padding
+    // Si necesitas un padding muy específico para este, usa una clase como mainStyle.dropdownContentSort
+    <div className={`${mainStyle.dropdownContent} ${mainStyle.dropdownContentSort}`}>
+      {" "}
+      {/* Usando la clase genérica para padding */}
+      <div className={mainStyle.sortSectionsContainer}>
+        <div className={mainStyle.sectionTitleContainer}>
+          <p className={mainStyle.sectionTitle}>Ordenar por:</p>
+          <p className={mainStyle.sectionTitle}>Orden:</p>
+        </div>
+        <div className={mainStyle.sortContentWrapper}>
+          <div className={mainStyle.sortCriteriaSection}>
+            {sortCriteriaOptions.map((crit) => (
+              <label key={crit} className={mainStyle.checkboxLabelStyled}>
+                {" "}
+                {/* Reutilizando checkboxLabelStyled */}
+                <Checkbox
+                  checked={selectedSortBy.includes(crit)}
+                  onChange={() => handleSortByCheckboxChange(crit)}
+                  sx={{
+                    padding: "4px", // Consistente con categoría
+                    color: "var(--color-text-primary)",
+                    "&.Mui-checked": { color: "var(--color-accent-pastel-main)" },
+                    "& .MuiSvgIcon-root": { fontSize: "1.2rem" }, // Consistente con categoría
+                  }}
+                />
+                <span className={mainStyle.checkboxText}>{crit}</span>{" "}
+                {/* Reutilizando checkboxText */}
+              </label>
+            ))}
+          </div>
+          <div className={mainStyle.borderTabVertical}></div> {/* Separador vertical */}
+          <div className={mainStyle.sortOrderSection}>
+            {sortOrderOptions.map((option: SortOrderOption) => (
+              // Usaremos una clase similar a checkboxLabelStyled para los radios, o la misma si el estilo es idéntico
+              <label key={option.value} className={mainStyle.checkboxLabelStyled}>
+                {" "}
+                {/* Nueva clase para consistencia */}
+                <Radio
+                  checked={sortOrder === option.value}
+                  onChange={() => setSortOrder(option.value)}
+                  value={option.value}
+                  sx={{
+                    padding: "4px", // Consistente
+                    color: "var(--color-text-primary)",
+                    "&.Mui-checked": { color: "var(--color-accent-pastel-main)" },
+                    "& .MuiSvgIcon-root": { fontSize: "1.2rem" }, // Consistente
+                  }}
+                />
+                <span className={mainStyle.checkboxText}>{option.label}</span>{" "}
+                {/* Nueva clase para consistencia */}
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className={mainStyle.dropdownActions}>
+        {" "}
+        {/* Usando la clase genérica */}
+        <button
+          onClick={cancelSortFilters}
+          className={`${mainStyle.actionButton} ${mainStyle.cancelButton}`}
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={applySortFilters}
+          className={`${mainStyle.actionButton} ${mainStyle.applyButton}`}
+        >
+          Aplicar Orden
+        </button>
+      </div>
+    </div>
+  );
+
+  // --- FIN Contenido de los Dropdowns ---
 
   return (
     <div className={mainStyle.container}>
-      <GenericDropdown
-        id="category"
-        buttonContent="Categoría"
-        buttonBaseClassName={mainStyle.filterButton}
-        isActive={activeDropdown === "category"}
-        onToggle={toggleDropdown}
-        buttonRef={dropdownRefs.category.button}
-        menuRef={dropdownRefs.category.menu}
-        menuContainerClassName={mainStyle.dropdownMenuContainer} // Clase para estilizar el contenedor del menú de categoría
+      {" "}
+      {/* Estilos del container se mantienen en CSS Module */}
+      <Button
+        id="category-button"
+        aria-controls={anchorElCategory ? "category-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorElCategory)}
+        onClick={(e) => handleOpenMenu(e, setAnchorElCategory)}
+        endIcon={anchorElCategory ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        sx={{
+          ...commonFilterButtonSx,
+          ...(anchorElCategory && commonFilterButtonActiveSx),
+        }}
+      >
+        Categoría
+      </Button>
+      <Menu
+        id="category-menu"
+        anchorEl={anchorElCategory}
+        open={Boolean(anchorElCategory)}
+        onClose={() => handleCloseMenu(setAnchorElCategory)}
+        MenuListProps={{ "aria-labelledby": "category-button" }}
+        PaperProps={{ ...menuPaperProps, className: mainStyle.dropdownMenuContainerWide }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
         {categoryDropdownContent}
-      </GenericDropdown>
-
-      <GenericDropdown
-        id="date"
-        buttonContent="Fecha"
-        buttonBaseClassName={mainStyle.filterButton}
-        isActive={activeDropdown === "date"}
-        onToggle={toggleDropdown}
-        buttonRef={dropdownRefs.date.button}
-        menuRef={dropdownRefs.date.menu}
-        menuContainerClassName={mainStyle.dropdownMenuContainer}
+      </Menu>
+      <Button
+        id="date-button"
+        aria-controls={anchorElDate ? "date-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorElDate)}
+        onClick={(e) => handleOpenMenu(e, setAnchorElDate)}
+        endIcon={anchorElDate ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        sx={{
+          ...commonFilterButtonSx,
+          ...(anchorElDate && commonFilterButtonActiveSx),
+        }}
+      >
+        Fecha
+      </Button>
+      <Menu
+        id="date-menu"
+        anchorEl={anchorElDate}
+        open={Boolean(anchorElDate)}
+        onClose={() => handleCloseMenu(setAnchorElDate)}
+        MenuListProps={{ "aria-labelledby": "date-button" }}
+        PaperProps={{ ...menuPaperProps, className: mainStyle.dropdownMenuContainer }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
         {dateDropdownContent}
-      </GenericDropdown>
-
-      <GenericDropdown
-        id="sort"
-        buttonContent="Ordenar"
-        buttonBaseClassName={mainStyle.filterButton}
-        isActive={activeDropdown === "sort"}
-        onToggle={toggleDropdown}
-        buttonRef={dropdownRefs.sort.button}
-        menuRef={dropdownRefs.sort.menu}
-        menuContainerClassName={mainStyle.dropdownMenuContainer}
+      </Menu>
+      <Button
+        id="sort-button"
+        aria-controls={anchorElSort ? "sort-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorElSort)}
+        onClick={(e) => handleOpenMenu(e, setAnchorElSort)}
+        endIcon={anchorElSort ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        sx={{
+          ...commonFilterButtonSx,
+          ...(anchorElSort && commonFilterButtonActiveSx),
+        }}
+      >
+        Ordenar
+      </Button>
+      <Menu
+        id="sort-menu"
+        anchorEl={anchorElSort}
+        open={Boolean(anchorElSort)}
+        onClose={() => handleCloseMenu(setAnchorElSort)}
+        MenuListProps={{ "aria-labelledby": "sort-button" }}
+        PaperProps={{ ...menuPaperProps, className: mainStyle.dropdownMenuContainerWide }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
         {sortDropdownContent}
-      </GenericDropdown>
-
-      <GenericDropdown
-        id="view"
-        buttonContent="Mostrar"
-        buttonBaseClassName={mainStyle.filterButton}
-        isActive={activeDropdown === "view"}
-        onToggle={toggleDropdown}
-        buttonRef={dropdownRefs.view.button}
-        menuRef={dropdownRefs.view.menu}
+      </Menu>
+      <Button
+        id="view-button"
+        aria-controls={anchorElView ? "view-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorElView)}
+        onClick={(e) => handleOpenMenu(e, setAnchorElView)}
+        sx={{
+          ...commonFilterButtonSx,
+          ...(anchorElView && commonFilterButtonActiveSx),
+        }}
       >
-        {viewDropdownContent}
-      </GenericDropdown>
+        {handleViewIcon(viewMode)}
+      </Button>
+      <Menu
+        id="view-menu"
+        anchorEl={anchorElView}
+        open={Boolean(anchorElView)}
+        onClose={() => handleCloseMenu(setAnchorElView)}
+        MenuListProps={{ "aria-labelledby": "view-button" }}
+        PaperProps={{ ...menuPaperProps, className: mainStyle.dropdownMenuContainerNarrow }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        {viewOptions.map((option) => (
+          <MenuItem key={option.value} onClick={() => handleSelectViewOption(option.value)}>
+            {handleViewIcon(option.value)}
+            {option.label}
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 };

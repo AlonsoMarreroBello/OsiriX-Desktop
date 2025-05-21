@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
 import AppList from "../../components/AppList/AppList";
-import FilterBar, { ViewMode } from "../../components/FilterBar/FilterBar";
+import FilterBar from "../../components/FilterBar/FilterBar";
 import style from "./HomePage.module.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import AppInfo from "../../interfaces/AppInfo";
 import appService from "../../services/AppService";
+import { ViewMode } from "../../models/FilterModel";
 
 const HomePage = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("lista");
@@ -65,7 +66,11 @@ const HomePage = () => {
         />
       </div>
       <div className={style.filterControlsContainer}>
-        <FilterBar handleViewMode={handleViewModeChange} setApps={handleAppList} />
+        <FilterBar
+          viewMode={viewMode}
+          handleViewMode={handleViewModeChange}
+          setApps={handleAppList}
+        />
       </div>
       <div className={style.appListContainer}>
         <AppList apps={apps} checkViewMode={checkViewMode} viewMode={viewMode} />

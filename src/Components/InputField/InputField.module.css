@@ -1,32 +1,73 @@
+/* InputField.module.css */
+
 .inputGroup {
-  margin-bottom: 1.5rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: var(--color-text-tertiary);
   font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
 }
 
 .input {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ffffff;
-  border-radius: 10px;
-  background-color: var(--bg-tertiary);
-  color: #ffffff;
+  padding: 0.85rem 1rem;
+  /* Borde base: puede ser el sutil que tenías o uno ligeramente más oscuro */
+  border: 1px solid var(--color-border-secondary);
+  /* ej. #525D66 */
+  border-radius: var(--border-radius-small);
+  background-color: var(--color-bg-input);
+  color: var(--color-text-primary);
   font-size: 1rem;
   box-sizing: border-box;
+  transition:
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  /* Transiciones suaves */
 }
 
 .input::placeholder {
-  color: #a0a0a0;
+  color: var(--color-text-placeholder);
 }
 
 .input:focus {
   outline: none;
-  border-color: #a0d8ef;
-  box-shadow: 0 0 5px rgba(160, 216, 239, 0.5);
+  /* Siempre quitar el outline por defecto si manejas el foco visualmente */
+  /* CAMBIO: Aplicar el toque verde vibrante en el foco */
+  border-color: var(--color-accent-vibrant-green-main);
+  /* Borde se vuelve verde vibrante */
+  box-shadow: 0 0 0 3px var(--color-accent-vibrant-green-shadow);
+  /* Sombra externa verde vibrante */
+}
+
+/* Opcional: Un acento verde muy sutil en el label cuando el input asociado está enfocado */
+/* Esto requiere un poco más de estructura en el HTML o JavaScript,
+   pero con CSS puro, si el input es hermano adyacente o general del label: */
+/*
+.input:focus + .label { // No funcionará con tu estructura actual donde el label está antes
+  color: var(--color-accent-vibrant-green-main);
+}
+*/
+/* O usando :focus-within en el .inputGroup (más moderno y soportado) */
+.inputGroup:focus-within .label {
+  color: var(--color-accent-vibrant-green-main);
+  /* El label se vuelve verde */
+  /* transition: color 0.2s ease-in-out; (opcional) */
+}
+
+.inputGroup:focus-within .input {
+  /* Para asegurar que el estilo de foco del input prevalezca si es necesario */
+  border-color: var(--color-accent-vibrant-green-main);
+  box-shadow: 0 0 0 3px var(--color-accent-vibrant-green-shadow);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1) brightness(100%);
 }

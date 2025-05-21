@@ -1,7 +1,7 @@
 .titleBar {
-  height: 2.3rem;
-  background: #1e1e1e;
-  color: white;
+  min-height: 2.5rem;
+  max-height: 2.5rem;
+  background-color: var(--color-bg-secondary);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,15 +24,9 @@
 .actionsContainer button {
   background: none;
   border: none;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-primary);
   -webkit-app-region: no-drag;
-  /* 🔥 Evita que los botones muevan la ventana */
-}
-
-.actionsContainer button:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
 
 .linkActions {
@@ -58,10 +52,20 @@
 
 .icon {
   font-size: 0.8rem;
+  color: var(--color-accent-pastel-dark);
+}
+
+.actionInnerContainer:hover .icon {
+  color: var(--color-accent-pastel-main);
+}
+
+.actionInnerContainer:hover .actionText {
+  color: var(--color-text-primary);
 }
 
 .actionText {
   font-size: 0.8rem;
-  color: var(--text-primary);
   margin: 0;
+  color: var(--color-accent-pastel-main);
+  text-decoration: none;
 }

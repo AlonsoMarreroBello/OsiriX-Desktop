@@ -1,15 +1,73 @@
 :root {
-  --bg-tertiary: #00072d;
-  --bg-secondary: #001c55;
-  --bg-primary: #0a2572;
-  --accent-medium: #0e6ba8;
-  --text-primary: #a6e1fa;
-  --text-alternative: #fff;
+  /* ---- COLORES BASE OSCUROS ---- */
+  --color-bg-primary: #1a1d21;
+  --color-bg-secondary: #2c303a;
+  --color-bg-tertiary: #252932;
+  --color-bg-header: #111316;
+  --color-bg-footer: #111316;
+  --color-bg-input: #3e474f;
+  --color-bg-vibrant-green-semi-transparent: rgba(36, 230, 117, 0.295);
+  --color-bg-vibrant-red-semi-transparent: rgba(244, 67, 54, 0.295);
+  /* ---- COLORES DE TEXTO ---- */
+  --color-text-primary: #eaeaea;
+  --color-text-secondary: #cdd3da;
+  --color-text-tertiary: #b0bec5;
+  --color-text-placeholder: #8798a0;
+  --color-text-on-accent-vibrant: #ffffff;
+  /* Texto blanco sobre verde vibrante */
+  --color-text-on-pastel: #283d41;
+  --color-text-inverse: #1b2631;
+  --color-text-headings-light: #ffffff;
+
+  /* ---- COLORES DE ACENTO - VERDE VIBRANTE (Para CTAs de descarga y highlights selectos) ---- */
+  --color-accent-vibrant-light-green-main: #2bf37f;
+  --color-accent-vibrant-green-main: #2ecc71;
+  /* Verde Esmeralda (el que usábamos como "legible") */
+  --color-accent-vibrant-green-dark: #28b463;
+  --color-accent-vibrant-green-darker: #239b56;
+  --color-accent-vibrant-green-shadow: rgba(46, 204, 113, 0.25);
+  /* Sombra más sutil */
+  --color-accent-vibrant-green-shadow-hover: rgba(46, 204, 113, 0.35);
+
+  /* ---- COLORES DE ACENTO - PASTEL (AZUL HIELO - acento principal de UI) ---- */
+  --color-accent-pastel-main: #a0d2db;
+  --color-accent-pastel-dark: #8ec1c9;
+  --color-accent-pastel-border: #8bbbc4;
+  --color-accent-pastel-shadow: rgba(160, 210, 219, 0.2);
+  --color-accent-pastel-shadow-hover: rgba(142, 193, 201, 0.3);
+  --color-accent-pastel-text-link: #bce3ea;
+
+  /* ---- COLORES DE ACENTO - SECUNDARIO (AZUL CIELO - para títulos informativos) ---- */
+  --color-accent-secondary-main: #82aaff;
+  --color-accent-secondary-dark: #a6e1fa;
+  /* Borde de sección descarga vuelve a un azul para no ser tan dominante con verde */
+  --color-accent-secondary-border: var(--color-accent-secondary-dark);
+
+  /* ---- COLORES DE ACENTO ROJO VIBRANTE ---- */
+  --color-accent-vibrant-red-main: #f44336;
+  --color-accent-vibrant-red-dark: #ca382e;
+  --color-accent-vibrant-red-darker: #a1251a;
+
+  /* ---- COLORES DE BORDE ---- */
+  --color-border-primary: #393e46;
+  --color-border-secondary: #525d66;
+  --color-border-footer: #2c303a;
+
+  /* ... (Otros, Tamaños, Border Radius sin cambios) ... */
+  --color-white: #ffffff;
+  --header-height: 70px;
+  --footer-height: 70px;
+  --border-radius-small: 8px;
+  --border-radius-medium: 10px;
+  --border-radius-large: 12px;
+  --border-radius-xlarge: 16px;
+  --shadow-default: rgba(0, 0, 0, 0.2);
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
-  background-color: var(--bg-primary);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   overflow-y: hidden;
 }

@@ -33,7 +33,7 @@ const App = () => {
     if (authService.getToken()) {
       setUsername(authService.getUsernameFromToken());
     }
-  }, []);
+  }, [isLoggedIn]);
 
   if (isLoggedIn) {
     window.electron.sendLoginSuccess();

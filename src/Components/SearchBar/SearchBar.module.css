@@ -3,71 +3,58 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
 }
 
 .input {
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #ffffff;
-  background-color: var(--bg-secondary);
-  color: #ffffff;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-medium);
+  background-color: var(--color-bg-input);
+  color: var(--color-text-primary);
   font-size: 1rem;
   box-sizing: border-box;
   height: 3rem;
+  transition:
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .input::placeholder {
-  color: #a0a0a0;
+  color: var(--color-text-placeholder);
 }
 
 .input:focus {
   outline: none;
-  border-color: #a0d8ef;
-  box-shadow: 0 0 5px rgba(160, 216, 239, 0.5);
-}
-
-.searchIcon {
-  background-color: var(--bg-secondary);
-  padding: 0.48rem 2rem;
-  border: 1px solid var(--text-alternative);
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  border-right: none;
-  color: var(--text-alternative);
-  height: 3rem;
-  cursor: pointer;
-}
-
-.searchIcon:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.searchIcon:active {
-  background-color: var(--bg-primary);
-  color: var(--text-alternative);
+  border-color: var(--color-accent-vibrant-green-main);
+  box-shadow: 0 0 0 3px var(--color-accent-vibrant-green-shadow);
 }
 
 .searchButton {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--text-alternative);
-  border-top-right-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  border-left: none;
-  color: var(--text-alternative);
+  background-color: var(--color-accent-vibrant-green-dark);
+  border: none;
+  border-radius: var(--border-radius-medium);
+  color: var(--color-white);
+  font-weight: bold;
   padding: 0.76rem 3rem;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
   height: 3rem;
+  transition:
+    box-shadow 0.3s ease-in-out,
+    background-color 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
 }
 
 .searchButton:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px var(--color-accent-vibrant-green-shadow-hover);
+  background-color: var(--color-accent-vibrant-green-main);
 }
 
 .searchButton:active {
-  background-color: var(--bg-primary);
-  color: var(--text-alternative);
+  transform: scale(1);
+  background-color: var(--color-accent-vibrant-green-darker);
+  color: var(--color-text-primary);
 }
