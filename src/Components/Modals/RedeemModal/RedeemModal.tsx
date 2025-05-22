@@ -41,10 +41,13 @@ const RedeemModal = ({ open, onClose }: RedeemModalProps) => {
             placeholder="Código de canjeo"
           />
           <div className={style.actionButtonsContainer}>
-            <button onClick={onClose} className={style.actionButton}>
+            <button onClick={onClose} className={`${style.actionButton} ${style.cancelButton}`}>
               Cancelar
             </button>
-            <button onClick={sendRedeemCode} className={`${style.actionButton}`}>
+            <button
+              onClick={sendRedeemCode}
+              className={`${style.actionButton} ${style.applyButton}`}
+            >
               Aceptar
             </button>
           </div>

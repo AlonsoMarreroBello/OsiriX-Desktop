@@ -7,11 +7,11 @@
   max-height: 15rem;
   max-width: 22rem;
   min-width: 31rem;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-accent-pastel-main);
   border-radius: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 25px var(--color-accent-vibrant-green-shadow-hover);
   padding: 0.5rem 2rem;
   align-content: center;
 }
@@ -23,7 +23,7 @@
   background: transparent;
   border: none;
   border-radius: 50%;
-  color: var(--text-primary);
+  color: var(--color-accent-pastel-main);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
@@ -31,8 +31,8 @@
   z-index: 10;
 }
 .closeButton:hover {
-  color: var(--text-alternative);
-  background-color: var(--bg-tertiary);
+  color: var(--color-white);
+  background-color: var(--color-bg-tertiary);
 }
 
 .content {
@@ -46,7 +46,7 @@
 
 .titleText {
   font-size: 1.5rem;
-  color: var(--text-alternative);
+  color: var(--color-white);
   margin: 0;
 }
 
@@ -54,26 +54,50 @@
   display: flex;
   gap: 1rem;
 }
+
 .actionButton {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--text-alternative);
-  padding: 0.7rem;
-  border-radius: 6px;
+  background: transparent;
+  padding: 0.6rem 1rem;
+  border-radius: var(--border-radius-small);
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   transition:
     background-color 0.2s,
-    border-color 0.2s;
+    border-color 0.2s,
+    color 0.2s;
   font-weight: bold;
 }
-.actionButton:hover {
-  border-color: var(--text-primary);
-  background-color: var(--bg-primary);
-  color: var(--text-alternative);
+
+.applyButton {
+  background-color: var(--color-bg-vibrant-green-semi-transparent);
+  color: var(--color-accent-vibrant-light-green-main);
+  border: 1px solid var(--color-accent-vibrant-green-main);
+  transition:
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-out,
+    box-shadow 0.3s ease-in-out,
+    border-color 0.3s ease-out;
+}
+.applyButton:hover {
+  background-color: var(--color-accent-vibrant-green-main);
+  border-color: var(--color-white);
+  color: var(--color-white);
+  box-shadow: 0 2px 25px var(--color-accent-pastel-shadow-hover);
 }
 
-input[type="text"]::placeholder {
-  color: var(--text-primary);
-  opacity: 0.5;
+.cancelButton {
+  background-color: var(--color-bg-vibrant-red-semi-transparent);
+  color: var(--color-accent-vibrant-red-main);
+  border: 1px solid var(--color-accent-vibrant-red-main);
+  transition:
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-out,
+    box-shadow 0.3s ease-in-out,
+    border-color 0.3s ease-out;
+}
+.cancelButton:hover {
+  background-color: var(--color-accent-vibrant-red-main);
+  border-color: var(--color-white);
+  color: var(--color-white);
+  box-shadow: 0 2px 25px var(--color-accent-pastel-shadow-hover);
 }

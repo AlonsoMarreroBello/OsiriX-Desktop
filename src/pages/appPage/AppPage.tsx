@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import style from "./AppPage.module.css"; // Asegúrate que la ruta es correcta
 import { Avatar, AvatarGroup, Typography } from "@mui/material";
 import { Download } from "@mui/icons-material";
 import AppInfo from "../../interfaces/AppInfo";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import appService from "../../services/AppService";
 
-const AppPage: React.FC = () => {
+const AppPage = () => {
+  const navigate = useNavigate();
   const appId = useParams().appId;
 
   const [appData, setAppData] = useState<AppInfo>(null);
@@ -14,7 +15,8 @@ const AppPage: React.FC = () => {
   const getAppData = async () => {
     if (appId) {
       const fetchedApp = await appService.getAppById(Number(appId));
-      setAppData(fetchedApp);
+      const appImgUrl = await appService.getImageByAppId(fetchedApp.appId);
+      setAppData({ ...fetchedApp, imgUrl: appImgUrl });
     }
   };
 
@@ -25,6 +27,16 @@ const AppPage: React.FC = () => {
   if (!appData) {
     return <Typography>Cargando datos de la aplicación...</Typography>;
   }
+
+  const getInitials = (name: string): string => {
+    if (!name) return "?";
+    const words = name.trim().split(/\s+/);
+    if (words.length === 0 || words[0] === "") return "?";
+    if (words.length > 1 && words[1] !== "") {
+      return `${words[0][0]}${words[1][0]}`.toUpperCase();
+    }
+    return words[0][0].toUpperCase();
+  };
 
   // const handleDownload = () => {
   //   if (appData.downloadLink) {
@@ -40,7 +52,6 @@ const AppPage: React.FC = () => {
   //   if (words.length === 0 || words[0] === "") return "?";
   //   return words[0][0].toUpperCase();
   // };
-
   return (
     <div className={style.appPageContainer}>
       <h1 className={style.appTitle}>{appData.name}</h1>
@@ -49,8 +60,26 @@ const AppPage: React.FC = () => {
           <img src={appData.imgUrl} alt={`${appData.name} logo`} className={style.appImage} />
         </div>
         <div className={style.appInfoContainer}>
-          <p className={style.appInfoText}>Publicador: {appData.publisher.publisherName}</p>
-          <p className={style.appInfoText}>Desarrollador: {appData.developer.name}</p>
+          <p
+            onClick={() =>
+              navigate(`/publisher/${appData.publisher.id}`, {
+                state: { publisherName: appData.publisher.publisherName },
+              })
+            }
+            className={`${style.appInfoText} ${style.appInfoTextLink}`}
+          >
+            Publicador: {appData.publisher.publisherName}
+          </p>
+          <p
+            onClick={() =>
+              navigate(`/developer/${appData.developer.id}`, {
+                state: { developerName: appData.developer.name },
+              })
+            }
+            className={`${style.appInfoText} ${style.appInfoTextLink}`}
+          >
+            Desarrollador: {appData.developer.name}
+          </p>
           <p className={style.appInfoText}>
             Fecha de lanzamiento: {appData.publicationDate.toLocaleString()}
           </p>
@@ -80,23 +109,28 @@ const AppPage: React.FC = () => {
               },
             }}
           >
-            {/* {appData.friendsWhoHaveApp.map((friend) => (
-              <Avatar
-                key={friend.id}
-                alt={friend.username}
-                src={friend.avatarUrl}
-                className={style.friendAvatar}
-              >
-                {getFriendInitials(friend.username)}
-              </Avatar>
-            ))} */}
+            {/* <Avatar
+              sx={{
+                bgcolor: "var(--color-bg-tertiary)",
+                color: "var(--color-white)",
+                width: 44,
+                height: 44,
+                fontSize: "1.3rem",
+                border: `2px solid var(--color-accent-secondary-dark)`,
+                padding: "0.4rem",
+              }}
+            >
+              {getInitials(user.username)}
+            </Avatar> */}
           </AvatarGroup>
         </div>
       </div>
-      <button className={style.downloadButton}>
-        Descargar
-        <Download className={style.downloadIcon} fontSize="medium" />
-      </button>
+      {appData.isDownloadable && (
+        <button className={style.downloadButton}>
+          Descargar
+          <Download fontSize="medium" />
+        </button>
+      )}
     </div>
   );
 };

@@ -45,14 +45,18 @@ const HomePage = () => {
   }, [viewMode]);
 
   useEffect(() => {
-    console.log(apps);
     getAllApps();
   }, []);
 
   const getAllApps = async () => {
     const fetchedApps = await appService.getApps();
-    console.log(fetchedApps);
-    setApps(fetchedApps);
+    const appsWithImgs = await Promise.all(
+      fetchedApps.map(async (app: AppInfo) => {
+        const appImgUrl = await appService.getImageByAppId(app.appId);
+        return { ...app, imgUrl: appImgUrl };
+      })
+    );
+    handleAppList(appsWithImgs);
   };
 
   return (

@@ -7,20 +7,27 @@ import ExtendedAppCard from "../ExtendedAppCard/ExtendedAppCard";
 import DetailedAppCard from "../DetailedAppCard/DetailedAppCard";
 
 import HoverAppCard from "../HoverAppCard/HoverAppCard";
-import hoverCardStyle from "../HoverAppCard/HoverAppCard.module.css";
 import { ViewMode } from "../../models/FilterModel";
 
 interface AppListProps {
   apps: AppInfo[];
   checkViewMode?: () => string;
   viewMode?: ViewMode;
+  withListContainer?: boolean;
+  withOwnAppContainer?: boolean;
 }
 interface CardPosition {
   top: number;
   left: number;
   right?: number;
 }
-const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
+const AppList = ({
+  apps,
+  checkViewMode,
+  viewMode,
+  withListContainer = true,
+  withOwnAppContainer = true,
+}: AppListProps) => {
   const [hoveredApp, setHoveredApp] = useState<AppInfo | null>(null);
   const [initialCardPosition, setInitialCardPosition] = useState<CardPosition | null>(null);
   const [adjustedCardPosition, setAdjustedCardPosition] = useState<CardPosition | null>(null);
@@ -63,14 +70,7 @@ const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
       case "detalles":
         return <DetailedAppCard key={app.appId} app={app} />;
       default:
-        return (
-          <BasicAppCard
-            key={app.appId}
-            app={app}
-            onHover={handleMouseEnter}
-            onLeave={handleMouseLeave}
-          />
-        );
+        return <DetailedAppCard key={app.appId} app={app} />;
     }
   };
 
@@ -115,16 +115,19 @@ const AppList = ({ apps, checkViewMode, viewMode }: AppListProps) => {
   }, [hoveredApp, initialCardPosition, adjustedCardPosition]);
 
   return (
-    <div className={styles.appsContainer}>
-      <div className={styles.listContainer}>
+    <div className={withOwnAppContainer ? styles.appsContainer : ""}>
+      <div className={withListContainer ? styles.listContainer : ""}>
         <div className={`${checkViewMode()} ${styles.appList}`}>
-          {apps.length > 0 ? apps.map((app) => renderApps(app)) : <div>No hay aplicaciones</div>}
+          {apps.length > 0 ? (
+            apps.map((app) => <>{app.isVisible && app.isPublished && renderApps(app)}</>)
+          ) : (
+            <div>No hay aplicaciones</div>
+          )}
         </div>
       </div>
       {hoveredApp && adjustedCardPosition && (
         <HoverAppCard
           app={hoveredApp}
-          className={hoverCardStyle.containerVisible}
           inlineStyle={{
             position: "absolute",
             top: `${adjustedCardPosition.top}px`,

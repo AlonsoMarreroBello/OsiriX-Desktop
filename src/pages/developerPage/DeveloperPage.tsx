@@ -1,29 +1,28 @@
+import { useLocation, useParams } from "react-router-dom";
+import style from "./DeveloperPage.module.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import style from "./LibraryPage.module.css";
-import AppInfo from "../../interfaces/AppInfo";
 import { useEffect, useState } from "react";
-import AppList from "../..//components/AppList/AppList";
+import AppInfo from "../../interfaces/AppInfo";
 import appService from "../../services/AppService";
-import authService from "../../services/AuthService";
-
-const LibraryPage = () => {
+import AppList from "../../components/AppList/AppList";
+const DeveloperPage = () => {
+  const { developerId } = useParams();
+  const location = useLocation();
+  const { developerName } = location.state || {};
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredApps, setFilteredApps] = useState<AppInfo[]>([]);
-  const userId = authService.getUserId();
+
   const handleSearchTerm = (term: string) => {
     setSearchTerm(term);
   };
-
   const search = () => {
     setFilteredApps((prev) =>
       prev.filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   };
-  const handleAppList = (apps: AppInfo[]) => {
-    setFilteredApps(apps);
-  };
-  const getAllUserApps = async () => {
-    const fetchedApps = await appService.getAppsByUserId(userId);
+
+  const getDeveloperApps = async () => {
+    const fetchedApps = await appService.getAppsByDeveloperId(Number(developerId));
     const appsWithImgs = await Promise.all(
       fetchedApps.map(async (app: AppInfo) => {
         const appImgUrl = await appService.getImageByAppId(app.appId);
@@ -33,16 +32,18 @@ const LibraryPage = () => {
     handleAppList(appsWithImgs);
   };
 
+  const handleAppList = (apps: AppInfo[]) => {
+    setFilteredApps(apps);
+  };
   useEffect(() => {
     if (!searchTerm) {
-      getAllUserApps();
+      getDeveloperApps();
     }
   }, [searchTerm]);
-
   return (
-    <div className={style.libraryContainer}>
+    <div className={style.developerPageContainer}>
       <div className={style.header}>
-        <h1 className={style.headerTitle}>Mis aplicaciones</h1>
+        <h1 className={style.headerTitle}>{developerName}</h1>
         <div className={style.searchBarContainer}>
           <SearchBar
             onSearch={search}
@@ -53,10 +54,21 @@ const LibraryPage = () => {
         </div>
       </div>
       <div className={style.appListContainer}>
-        <AppList apps={filteredApps} viewMode="mosaico" checkViewMode={() => style.appMosaicList} />
+        <div className={style.subHeader}>
+          <h1 className={style.headerTitle}>Aplicaciones</h1>
+        </div>
+        <div className={style.subAppsContainer}>
+          <AppList
+            apps={filteredApps}
+            viewMode="detalles"
+            withListContainer={false}
+            withOwnAppContainer={false}
+            checkViewMode={() => style.appMosaicList}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default LibraryPage;
+export default DeveloperPage;

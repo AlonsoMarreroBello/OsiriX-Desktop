@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_PORT } from "../port/ApiPort";
 import authService from "./AuthService";
+import { MINIO_IMG_PORT } from "../port/MinIoPort";
 
 const getApps = async () => {
   try {
@@ -67,12 +68,45 @@ const getAppsByUserId = async (userId: number) => {
   }
 };
 
+const getAppsByDeveloperId = async (developerId: number) => {
+  try {
+    const response = await axios.get(`${API_PORT}/apps/by-developer/${developerId}`, {
+      headers: {
+        Authorization: `Bearer ${authService.getToken()}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getAppsByPublisherId = async (publisherId: number) => {
+  try {
+    const response = await axios.get(`${API_PORT}/apps/by-publisher/${publisherId}`, {
+      headers: {
+        Authorization: `Bearer ${authService.getToken()}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getImageByAppId = async (appId: number) => {
+  return MINIO_IMG_PORT(appId, "image");
+};
+
 const appService = {
   getApps,
   getAppById,
   getAppsByName,
   getAppsByCategoryIds,
   getAppsByUserId,
+  getAppsByDeveloperId,
+  getAppsByPublisherId,
+  getImageByAppId,
 };
 
 export default appService;

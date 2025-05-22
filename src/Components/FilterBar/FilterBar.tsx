@@ -146,7 +146,7 @@ const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
   };
   // --- Contenido de los Dropdowns (sin cambios aquí) ---
   const categoryDropdownContent = (
-    <div className={mainStyle.dropdownContent}>
+    <div className={`${mainStyle.dropdownContent} ${mainStyle.dropdownCategoryMenu}`}>
       {" "}
       {/* Clase específica para este dropdown */}
       <div className={mainStyle.categoryTabs}>
@@ -163,34 +163,35 @@ const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
           Aplicaciones
         </button>
       </div>
-      <div className={mainStyle.checkboxGridCategory}>
-        {" "}
-        {/* Clase específica para el grid de este dropdown */}
-        {categories.length > 0 ? (
-          categories.map((cat: Category) => (
-            <label key={cat.categoryId} className={mainStyle.checkboxLabelStyled}>
-              <Checkbox
-                checked={(categoryTab === "GAME"
-                  ? selectedGameCategories
-                  : selectedAppCategories
-                ).includes(cat.categoryId)}
-                onChange={() => handleCategoryCheckboxChange(cat.categoryId)}
-                sx={{
-                  padding: "4px",
-                  color: "var(--color-text-primary)", // O una variable más específica para texto de control
-                  "&.Mui-checked": { color: "var(--color-accent-pastel-main)" },
-                  "& .MuiSvgIcon-root": { fontSize: "1.2rem" },
-                }}
-              />
-              <span className={mainStyle.checkboxText}>{cat.categoryName}</span>
-            </label>
-          ))
-        ) : (
-          <p className={mainStyle.noItemsMessageFullWidth}>
-            No hay categorías {categoryTab === "GAME" ? "de juegos" : "de aplicaciones"}{" "}
-            disponibles.
-          </p>
-        )}
+      <div className={mainStyle.categoryListContainer}>
+        <div className={mainStyle.checkboxGridCategory}>
+          {" "}
+          {categories.length > 0 ? (
+            categories.map((cat: Category) => (
+              <label key={cat.categoryId} className={mainStyle.checkboxLabelStyled}>
+                <Checkbox
+                  checked={(categoryTab === "GAME"
+                    ? selectedGameCategories
+                    : selectedAppCategories
+                  ).includes(cat.categoryId)}
+                  onChange={() => handleCategoryCheckboxChange(cat.categoryId)}
+                  sx={{
+                    padding: "4px",
+                    color: "var(--color-text-primary)",
+                    "&.Mui-checked": { color: "var(--color-accent-pastel-main)" },
+                    "& .MuiSvgIcon-root": { fontSize: "1.2rem" },
+                  }}
+                />
+                <span className={mainStyle.checkboxText}>{cat.categoryName}</span>
+              </label>
+            ))
+          ) : (
+            <p className={mainStyle.noItemsMessageFullWidth}>
+              No hay categorías {categoryTab === "GAME" ? "de juegos" : "de aplicaciones"}{" "}
+              disponibles.
+            </p>
+          )}
+        </div>
       </div>
       <div className={mainStyle.dropdownActions}>
         {" "}

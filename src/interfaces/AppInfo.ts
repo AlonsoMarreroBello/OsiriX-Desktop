@@ -3,7 +3,7 @@ import DeveloperReseponseDto from "./Developer";
 import PublisherSimpleResponseDto from "./Publisher";
 
 export default interface AppInfo {
-  appId: bigint | number | string;
+  appId: number;
   publisher: PublisherSimpleResponseDto;
   developer: DeveloperReseponseDto;
   name: string;
@@ -12,6 +12,7 @@ export default interface AppInfo {
   downloads?: number;
   categories?: Category[];
   imgUrl?: string;
+  iconUrl?: string;
   isPublished: boolean;
   isVisible: boolean;
   isDownloadable: boolean;

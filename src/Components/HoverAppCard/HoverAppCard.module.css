@@ -1,62 +1,30 @@
 .container {
-  background-color: var(--bg-primary);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-  color: #ffffff;
-  width: 320px; /* Ancho fijo para la tarjeta flotante */
-  overflow: visible; /* Para que el contenido respete el borde redondeado */
-  border: 1px solid; /* Borde sutil */
-  border-color: var(--text-primary);
-  border-radius: 8px;
+  background-color: var(--color-bg-primary);
+  box-shadow: 0 0 15px var(--color-accent-pastel-main);
+  width: 320px;
+  overflow: visible;
+  border: 1px solid var(--color-accent-vibrant-green-main);
+  border-radius: var(--border-radius-medium);
   pointer-events: none;
-  z-index: 3;
   position: relative;
-  opacity: 0;
   transform: scale(0.35);
   transition:
-    opacity 0.2s ease-out,
-    visibility 0s linear 0.2s,
-    transform 0.2s ease-out;
-  transition-delay: 0.5s;
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+  opacity: 0;
 }
 
 .containerVisible {
   opacity: 1;
   transform: scale(1);
-  transition-delay: 0.5s;
 }
-
-/* .container::before {
-  content: "";
-  position: absolute;
-  top: 30px;
-  right: 100%;
-  z-index: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 11px 11px 11px 0;
-  border-color: transparent var(--text-primary) transparent transparent;
-}
-
-.container::after {
-  content: "";
-  position: absolute;
-  top: 31px;
-  right: 100%;
-  z-index: 1; 
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 10px 10px 10px 0;
-  border-color: transparent var(--bg-primary) transparent transparent;
-} */
 
 .banner {
   width: 100%;
   height: 10rem; /* Altura del banner/imagen */
   object-fit: cover; /* Asegura que la imagen cubra el espacio */
   display: block; /* Evita espacio extra debajo de la imagen */
-  background-color: #1f2937; /* Color de fondo mientras carga o si no hay imagen */
+  background-color: var(--color-bg-secondary);
 }
 
 .contentWrapper {
@@ -69,18 +37,17 @@
   margin: 0 0 8px 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Añade '...' si el título es muy largo */
+  text-overflow: ellipsis;
 }
 
 .description {
   font-size: 0.88rem;
-  color: #cdd5e0; /* Color de texto ligeramente más claro */
+  color: var(--color-text-secondary);
   margin-bottom: 12px;
-  line-clamp: 3; /* Número de líneas a mostrar */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: calc(3 * 1.2em); /* Reserva espacio aprox. para 3 líneas */
+  min-height: calc(3 * 1.2em);
   line-height: 1.2em;
 }
 
@@ -97,12 +64,12 @@
 }
 
 .metaDataIcon {
-  color: var(--text-alternative); /* Color azul claro para los iconos */
-  font-size: 1.1rem !important; /* Ajusta el tamaño del icono (usa !important si es necesario por Material UI) */
+  color: var(--color-white);
+  font-size: 1.1rem;
   flex-shrink: 0; /* Evita que el icono se encoja */
 }
 
 .metaDataText {
   font-size: 0.85rem;
-  color: #e0e0e0; /* Color de texto para los metadatos */
+  color: var(--color-text-tertiary);
 }

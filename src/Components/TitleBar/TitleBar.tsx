@@ -6,6 +6,7 @@ import FriendModal from "../Modals/FriendModal/FriendModal";
 import SettingsModal from "../Modals/SettingsModal/SettingsModal";
 import RedeemModal from "../Modals/RedeemModal/RedeemModal";
 import { useNavigate } from "react-router-dom";
+import { WEB_PUBLISHER_REQUEST } from "../../port/WebPort";
 export default function TitleBar() {
   const [isMaximized, setIsMaximized] = useState<boolean>(false);
   const [openFriendModal, setOpenFriendModal] = useState(false);
@@ -22,7 +23,9 @@ export default function TitleBar() {
   useEffect(() => {
     window.electron.isMaximized(setIsMaximized);
   }, []);
-
+  const handleNavigator = () => {
+    window.electron.openExternal(WEB_PUBLISHER_REQUEST);
+  };
   return (
     <div className={style.titleBar}>
       <div className={style.actionsContainer}>
@@ -31,12 +34,12 @@ export default function TitleBar() {
             <img src={logo} alt="logo" className={style.logo} />
             <p className={style.actionText}>Osirix</p>
           </div>
-          <div className={style.actionInnerContainer}>
+          {/* <div className={style.actionInnerContainer}>
             <Settings className={style.icon} />
             <button onClick={handleOpenSettingsModal}>
               <p className={style.actionText}>Ajustes</p>
             </button>
-          </div>
+          </div> */}
           <div className={style.actionInnerContainer}>
             <PeopleAlt className={style.icon} />
             <button onClick={handleOpenFriendModal}>
@@ -52,7 +55,7 @@ export default function TitleBar() {
           <div className={style.actionInnerContainer}>
             <PublishOutlined className={style.icon} />
             <button>
-              <a href="#" className={style.actionText}>
+              <a onClick={handleNavigator} className={style.actionText}>
                 Subir una aplicación
               </a>
             </button>

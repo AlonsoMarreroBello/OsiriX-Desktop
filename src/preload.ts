@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld("electron", {
   },
   sendLoginSuccess: () => ipcRenderer.send("login-successful"),
   requestLogout: () => ipcRenderer.send("logout-requested"),
+  openExternal: (url: string) => ipcRenderer.send("open-external", url),
 });
 
 declare global {
@@ -24,6 +25,7 @@ declare global {
       isMaximized: (callback: (maximized: boolean) => void) => void;
       sendLoginSuccess: () => void;
       requestLogout: () => void;
+      openExternal: (url: string) => void;
     };
   }
 }

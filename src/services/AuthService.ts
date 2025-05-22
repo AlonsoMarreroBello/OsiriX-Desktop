@@ -6,7 +6,10 @@ import { jwtDecode } from "jwt-decode";
 const login = async (credentials: AuthLoginRequestDto) => {
   try {
     const response = await axios.post(`${API_PORT}/auth/login`, credentials);
-    localStorage.setItem("token", response.data.data.token);
+    const token = response.data.data.token;
+    if (token) {
+      setUserInfoToLocalStorage(token);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -15,8 +18,10 @@ const login = async (credentials: AuthLoginRequestDto) => {
 const register = async (credentials: AuthRegisterRequestDto) => {
   try {
     const response = await axios.post(`${API_PORT}/auth/register`, credentials);
-    console.log(response);
-    localStorage.setItem("token", response.data.data.token);
+    const token = response.data.data.token;
+    if (token) {
+      setUserInfoToLocalStorage(token);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -24,24 +29,35 @@ const register = async (credentials: AuthRegisterRequestDto) => {
 
 const getToken = () => localStorage.getItem("token");
 
-const clearToken = () => localStorage.removeItem("token");
+const clearToken = () => clearAuthDataFromLocalStorage();
 
-const getUsernameFromToken = () => {
-  const token = getToken();
-  if (token) {
-    const tokenData: DecodedToken = jwtDecode(token);
-    console.log(tokenData);
-    return tokenData.sub;
-  }
+const getUsername = () => {
+  return localStorage.getItem("username");
 };
 
-const getUserIdFromToken = () => {
-  const token = getToken();
-  if (token) {
-    const tokenData: DecodedToken = jwtDecode(token);
-    console.log(tokenData, "service userId");
-    return tokenData.userId;
+const getUserId = () => {
+  const userIdStr = localStorage.getItem("userId");
+  return userIdStr ? parseInt(userIdStr, 10) : null;
+};
+
+const setUserInfoToLocalStorage = (token: string) => {
+  try {
+    const decodedData: DecodedToken = jwtDecode(token);
+    localStorage.setItem("token", token);
+    localStorage.setItem("username", decodedData.sub);
+    localStorage.setItem("userId", decodedData.userId.toString());
+    console.log("User info set to localStorage:", decodedData);
+  } catch (error) {
+    console.error("Error decoding token or setting user info to localStorage:", error);
+    clearAuthDataFromLocalStorage(); // Limpia si hay error
   }
+};
+const clearAuthDataFromLocalStorage = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  localStorage.removeItem("userId");
+  // localStorage.removeItem("userInfo");
+  console.log("Auth data cleared from localStorage");
 };
 
 const authService = {
@@ -49,7 +65,7 @@ const authService = {
   register,
   getToken,
   clearToken,
-  getUsernameFromToken,
-  getUserIdFromToken,
+  getUsername,
+  getUserId,
 };
 export default authService;

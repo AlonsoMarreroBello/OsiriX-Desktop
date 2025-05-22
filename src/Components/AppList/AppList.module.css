@@ -16,12 +16,11 @@
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: 0 0 25px var(--color-accent-vibrant-green-shadow-hover);
 }
 
 .appList {
   display: grid;
-  justify-content: center;
   justify-items: center;
   gap: 1rem;
 }

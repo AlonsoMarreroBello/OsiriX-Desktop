@@ -3,5 +3,10 @@ export default interface User {
   email: string;
   username: string;
   password: string;
-  friends?: User[];
+}
+
+export interface UserSimple {
+  id: number;
+  username: string;
+  email: string;
 }

@@ -8,6 +8,8 @@ import AppPage from "../pages/appPage/AppPage";
 import AuthPage from "../pages/authPage/AuthPage";
 import authService from "../services/AuthService";
 import { useEffect, useState, useCallback } from "react";
+import PublisherPage from "../pages/publisherPage/PublisherPage";
+import DeveloperPage from "../pages/developerPage/DeveloperPage";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!authService.getToken());
@@ -31,7 +33,7 @@ const App = () => {
 
   useEffect(() => {
     if (authService.getToken()) {
-      setUsername(authService.getUsernameFromToken());
+      setUsername(authService.getUsername());
     }
   }, [isLoggedIn]);
 
@@ -45,7 +47,8 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/library" element={<LibraryPage />} />
           <Route path="/app/:appId" element={<AppPage />} />
-          <Route path="/app-details" element={<AppPage />} />
+          <Route path="/publisher/:publisherId" element={<PublisherPage />} />
+          <Route path="/developer/:developerId" element={<DeveloperPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </>

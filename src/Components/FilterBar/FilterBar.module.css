@@ -29,6 +29,12 @@
   padding: 0.8rem;
 }
 
+.dropdownCategoryMenu {
+  min-width: 835px;
+  max-width: 840px;
+  min-height: 480px;
+}
+
 /* Clase para aplicar a PaperProps del Menu para controlar su ancho */
 .dropdownMenuContainer {
   min-width: 280px;
@@ -72,13 +78,18 @@
   font-weight: 700;
 }
 
+.categoryListContainer {
+  border-radius: 2rem;
+  min-height: 22rem;
+  max-height: 22rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
 .checkboxGridCategory {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.4rem 0.8rem;
-  max-height: 12rem;
-  min-height: 7rem;
-  overflow-y: auto; /* Permitirá el scrollbar por defecto del sistema */
   padding: 0.25rem;
   margin-bottom: 1rem;
 }
@@ -88,7 +99,7 @@
   align-items: center;
   color: var(--color-text-primary);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
   padding: 0.4rem 0.6rem;
   border-radius: var(--border-radius-small);
   transition:

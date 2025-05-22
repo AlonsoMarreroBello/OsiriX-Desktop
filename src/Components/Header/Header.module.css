@@ -36,7 +36,6 @@
   font-weight: bold;
   color: var(--color-accent-pastel-main);
   margin: 0;
-  transition: color 0.2s ease-in-out;
 }
 
 button p:hover {
@@ -46,6 +45,14 @@ button p:hover {
 
 button:hover .icon {
   color: var(--color-white);
+}
+
+button:active p {
+  color: var(--color-accent-secondary-main);
+}
+
+button:active .icon {
+  color: var(--color-accent-secondary-main);
 }
 
 button p:hover::after,

@@ -1,0 +1,50 @@
+.publisherPageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 5rem;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  width: 75%;
+  justify-content: center;
+  border-bottom: 2px solid var(--color-border-secondary);
+}
+
+.headerTitle {
+  font-size: 2rem;
+  color: var(--color-white);
+  margin-right: 20rem;
+}
+
+.subHeader {
+  justify-content: start;
+  width: 100%;
+  border-bottom: 2px solid var(--color-border-secondary);
+}
+
+.appListContainer {
+  min-width: 75%;
+  max-width: 75%;
+  height: 45rem;
+}
+
+.searchBarContainer {
+  flex-grow: 1;
+  align-content: center;
+}
+
+.subAppsContainer {
+  margin-top: 1rem;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-accent-secondary-dark);
+  border-radius: var(--border-radius-medium);
+  min-height: 86%;
+  max-height: 86%;
+  padding: 0 1rem;
+}

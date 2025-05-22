@@ -1,15 +1,18 @@
+/* eslint-disable no-unused-vars */
 // src/components/Modals/FriendModal/FriendModal.tsx
 import { useState, useEffect, useRef } from "react";
 import style from "./FriendModal.module.css";
 import SearchBar from "../../SearchBar/SearchBar"; // Asegúrate que la ruta es correcta
-import { Close as CloseIcon, PersonAddAlt1 as AddFriendIconMUI } from "@mui/icons-material"; // Icono de añadir amigo más específico
+import { Close as CloseIcon, PersonAddAlt1 as AddFriendIconMUI, Check } from "@mui/icons-material"; // Icono de añadir amigo más específico
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import User from "../../../interfaces/User";
+import { UserSimple } from "../../../interfaces/User";
 import InputField from "../../../components/InputField/InputField";
 import authService from "../../../services/AuthService";
+import { friendshipService } from "../../../services/FriendshipService";
+import { Friendship, FriendshipResponseDto } from "../../../interfaces/Friendship";
 
 interface FriendModalProps {
   open: boolean;
@@ -26,7 +29,7 @@ interface ContextMenuProps {
   visible: boolean;
   x: number;
   y: number;
-  selectedFriend: User | null;
+  selectedFriend: Friendship | null;
 }
 
 const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
@@ -36,9 +39,17 @@ const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
     setFriendName(e.target.value);
   };
 
-  const sendFriendRequest = () => {
-    console.log("Nombre de usuario al que solicitar amistad: ", friendName);
-    onClose();
+  const sendFriendRequest = async () => {
+    try {
+      const newFriendship = await friendshipService.sendFriendRequest(
+        authService.getUserId(),
+        friendName
+      );
+      console.log(newFriendship, "Nueva amistad enviadaa");
+      onClose();
+    } catch (error) {
+      console.error("Error enviando solicitud de amistad:", error);
+    }
   };
 
   return (
@@ -55,7 +66,9 @@ const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
             <CloseIcon sx={{ fontSize: "2.2rem" }} />
           </button>
           <div className={style.content}>
-            <h2 className={style.titleText}>Introduzca el nombre de usuario</h2>
+            <h2 className={`${style.titleText} ${style.textRequest}`}>
+              Introduzca el nombre de usuario
+            </h2>
             <InputField
               id="redeem-code"
               type="text"
@@ -64,10 +77,16 @@ const FriendRequestModal = ({ open, onClose }: FriendModalProps) => {
               placeholder="Nombre de usuario completo.."
             />
             <div className={style.actionButtonsContainer}>
-              <button onClick={onClose} className={style.actionButton}>
+              <button
+                onClick={onClose}
+                className={`${style.actionRequestButton} ${style.cancelRequestButton}`}
+              >
                 Cancelar
               </button>
-              <button onClick={sendFriendRequest} className={`${style.actionButton}`}>
+              <button
+                onClick={sendFriendRequest}
+                className={`${style.actionRequestButton} ${style.applyRequestButton}`}
+              >
                 Aceptar
               </button>
             </div>
@@ -105,7 +124,9 @@ const ContextMenu = ({ x, y, onDelete }: CustomContextMenuProps) => {
 
 const FriendModal = ({ open, onClose }: FriendModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredFriends, setFilteredFriends] = useState<User[]>([]);
+  const [allFriends, setAllFriends] = useState<Friendship[]>([]);
+  const [friendsList, setFriendList] = useState<Friendship[]>([]);
+  const [friendsPendingList, setFriendsPendingList] = useState<Friendship[]>([]);
   const [openFriendRequestModal, setOpenFriendRequestModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuProps>({
     visible: false,
@@ -113,13 +134,17 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     y: 0,
     selectedFriend: null,
   });
-  const username = authService.getUsernameFromToken();
+  const username = authService.getUsername();
   const modalBoxRef = useRef<HTMLElement>(null);
   const handleOpenFriendRequestModal = () => setOpenFriendRequestModal(true);
   const handleCloseFriendRequestModal = () => setOpenFriendRequestModal(false);
   const handleSearchTerm = (term: string) => setSearchTerm(term);
 
-  const handleFriendContextMenu = (event: React.MouseEvent, friend: User) => {
+  const handleFriendContextMenu = (
+    event: React.MouseEvent,
+    friend: UserSimple,
+    friendshipId: number
+  ) => {
     event.preventDefault();
     if (modalBoxRef.current) {
       const modalRect = modalBoxRef.current.getBoundingClientRect();
@@ -127,7 +152,7 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
         visible: true,
         x: event.clientX - modalRect.left,
         y: event.clientY - modalRect.top,
-        selectedFriend: friend,
+        selectedFriend: { friendshipId, user: friend },
       });
     }
   };
@@ -135,22 +160,80 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
   const handleCloseContextMenu = () => {
     setContextMenu((prev) => ({ ...prev, visible: false, selectedFriend: null }));
   };
-
-  const handleDeleteFriend = () => {
-    if (contextMenu.selectedFriend) {
-      console.log("Eliminar amigo: ", contextMenu.selectedFriend.username);
-      // logica para eliminar a un amigo del usuario actual......
+  const handleClickOutside = (event: MouseEvent) => {
+    const targetElement = event.target as HTMLElement;
+    if (contextMenu.visible && !targetElement.closest(`.${style.contextMenu}`)) {
+      handleCloseContextMenu();
+    }
+  };
+  const handleDeleteFriendshipContext = async () => {
+    if (contextMenu.selectedFriend && "friendshipId" in contextMenu.selectedFriend) {
+      try {
+        await friendshipService.cancelFriendship(contextMenu.selectedFriend.friendshipId);
+        setAllFriends((prev) =>
+          prev.filter((friend) => friend.friendshipId !== contextMenu.selectedFriend.friendshipId)
+        );
+        setFriendList((prev) =>
+          prev.filter((friend) => friend.friendshipId !== contextMenu.selectedFriend.friendshipId)
+        );
+      } catch (error) {
+        console.error("Error eliminando la amistad:", error);
+      }
     }
     handleCloseContextMenu();
   };
 
-  // const search = () => {
+  const handleDeleteFriendshipButton = async (id: number) => {
+    try {
+      await friendshipService.cancelFriendship(id);
+      setAllFriends((prev) => prev.filter((friend) => friend.friendshipId !== id));
+      setFriendList((prev) => prev.filter((friend) => friend.friendshipId !== id));
+    } catch (error) {
+      console.error("Error eliminando la amistad:", error);
+    }
+  };
 
-  // };
+  const handleAcceptFriendshipButton = async (id: number) => {
+    try {
+      await friendshipService.acceptFriendship(id);
+      await getCurrentUserFriends();
+    } catch (error) {
+      console.error("Error aceptando la amistad:", error);
+    }
+  };
 
-  const getCurrentUserFriends = (currentUser: User) => {
-    const friends = currentUser.friends || [];
-    setFilteredFriends(friends);
+  const handleSearch = () => {
+    const searchedFriends = allFriends.filter((friend) =>
+      friend.user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFriendList(searchedFriends);
+  };
+
+  const getCurrentUserFriends = async () => {
+    const currentUserId = authService.getUserId();
+    const userFriends: FriendshipResponseDto[] =
+      await friendshipService.getFriendsByUserId(currentUserId);
+
+    const acceptedFriends: FriendshipResponseDto[] = userFriends.filter(
+      (friendship) => friendship.isAccepted === true
+    );
+    const friends: Friendship[] = acceptedFriends.map((friendship) => ({
+      friendshipId: friendship.id,
+      user: friendship.user1.id === currentUserId ? friendship.user2 : friendship.user1,
+    }));
+
+    setAllFriends(friends);
+    setFriendList(friends);
+
+    const pendingFriends: FriendshipResponseDto[] = userFriends.filter(
+      (friendship) => friendship.isAccepted === false
+    );
+
+    const pendingFriendsList: Friendship[] = pendingFriends.map((friendship) => ({
+      friendshipId: friendship.id,
+      user: friendship.user1.id === currentUserId ? friendship.user2 : friendship.user1,
+    }));
+    setFriendsPendingList(pendingFriendsList);
   };
 
   const getInitials = (name: string): string => {
@@ -163,14 +246,17 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     return words[0][0].toUpperCase();
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const targetElement = event.target as HTMLElement;
-      if (contextMenu.visible && !targetElement.closest(`.${style.contextMenu}`)) {
-        handleCloseContextMenu(); // Esta es ahora una nueva referencia de función en cada render
-      }
-    };
+  const renderTitleHeader = (title: string) => {
+    return (
+      <div className={style.titleHeaderContainer}>
+        <div className={style.borderHorizontal}></div>
+        <p className={style.titleText}>{title}</p>
+        <div className={style.borderHorizontal}></div>
+      </div>
+    );
+  };
 
+  useEffect(() => {
     if (contextMenu.visible) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -180,11 +266,11 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
     };
   }, [contextMenu.visible, handleCloseContextMenu]);
 
-  // useEffect(() => {
-  //   if (!searchTerm) {
-  //     getCurrentUserFriends(exampleUserInitialData);
-  //   }
-  // }, [searchTerm]);
+  useEffect(() => {
+    if (!searchTerm) {
+      getCurrentUserFriends();
+    }
+  }, [searchTerm]);
 
   return (
     <Modal
@@ -201,13 +287,14 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
         <div className={style.header}>
           <Avatar
             sx={{
-              bgcolor: "var(--bg-tertiary)",
-              color: "var(--text-primary)",
               width: 80,
               height: 80,
               fontSize: "2.5rem",
-              border: `3px solid var(--text-primary)`,
-              marginBottom: "5px",
+              bgcolor: "var(--color-bg-secondary)",
+              border: "2px solid var(--color-accent-secondary-dark)",
+              ":hover": {
+                boxShadow: "0 0 25px var(--color-accent-vibrant-green-shadow-hover)",
+              },
             }}
           >
             {getInitials(username)}
@@ -216,7 +303,11 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
             variant="h6"
             component="h2"
             id="friends-modal-title"
-            className={style.currentUsername}
+            sx={{
+              fontSize: "1.2rem",
+              fontWeight: "bold",
+              color: "var(--color-white)",
+            }}
           >
             {username}
           </Typography>
@@ -225,8 +316,8 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
           <div className={style.searchBarWrapper}>
             <SearchBar
               placeholder="Amigo1..."
-              // onSearch={search}
               value={searchTerm}
+              onSearch={handleSearch}
               onChange={(e) => handleSearchTerm(e.target.value)}
             />
           </div>
@@ -238,49 +329,106 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
             <AddFriendIconMUI
               sx={{
                 fontSize: "2.8rem",
-                color: "var(--text-alternative)",
-                ":hover": { color: "var(--text-primary)" },
+                color: "var(--color-white)",
+                transition: "color 0.3s ease-in-out",
+                ":hover": {
+                  color: "var(--color-accent-vibrant-green-main)",
+                },
               }}
             />
           </button>
         </div>
-        <div
-          id="friends-modal-description"
-          className={`${filteredFriends.length > 0 ? style.friendsListColumn : ""}`}
-        >
-          {filteredFriends.length > 0 ? (
-            <>
-              {filteredFriends.map((friend) => (
-                <div
-                  key={friend.id}
-                  className={style.friendItemStyled}
-                  onContextMenu={(e) => {
-                    handleFriendContextMenu(e, friend);
-                  }}
-                >
-                  <div className={style.avatarContainer}>
-                    <Avatar
-                      sx={{
-                        bgcolor: "var(--bg-tertiary)",
-                        color: "var(--text-primary)",
-                        width: 44,
-                        height: 44,
-                        fontSize: "1rem",
-                        border: `2px solid var(--text-primary)`,
-                      }}
-                      className={style.friendMuiAvatarEffect}
-                    >
-                      {getInitials(friend.username)}
-                    </Avatar>
+        <div className={style.friendListContainer}>
+          {friendsPendingList.length > 0 && renderTitleHeader("Solicitudes de amistad")}
+          <div className={`${style.friendsListColumn} ${style.friendsPending}`}>
+            {friendsPendingList.length > 0 && (
+              <>
+                {friendsPendingList.map(({ user, friendshipId }) => (
+                  <div key={user.id} className={style.friendItemStyled}>
+                    <div className={`${style.avatarContainer} ${style.avatarPending}`}>
+                      <Avatar
+                        sx={{
+                          bgcolor: "var(--color-bg-tertiary)",
+                          color: "var(--color-white)",
+                          width: 44,
+                          height: 44,
+                          fontSize: "1.3rem",
+                          border: `2px solid var(--color-accent-secondary-dark)`,
+                          padding: "0.4rem",
+                        }}
+                      >
+                        {getInitials(user.username)}
+                      </Avatar>
+                      <Typography component="span" className={style.friendUsernameStyled}>
+                        {user.username}
+                      </Typography>
+                      <div className={style.actionButtonsContainer}>
+                        <button
+                          onClick={() => handleDeleteFriendshipButton(friendshipId)}
+                          className={`${style.actionButton} ${style.cancelButton}`}
+                        >
+                          <CloseIcon />
+                        </button>
+                        <button
+                          onClick={() => handleAcceptFriendshipButton(friendshipId)}
+                          className={`${style.actionButton} ${style.applyButton}`}
+                        >
+                          <Check />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <Typography component="span" className={style.friendUsernameStyled}>
-                    {friend.username}
-                  </Typography>
-                </div>
-              ))}
-            </>
-          ) : (
-            <p className={style.noFriendsMessage}>No se encontraron amigos.</p>
+                ))}
+              </>
+            )}
+          </div>
+          {friendsList.length > 0 && renderTitleHeader("Amigos")}
+          <div className={style.friendsListColumn}>
+            {friendsList.length > 0 && (
+              <>
+                {friendsList.map(({ user, friendshipId }) => (
+                  <div
+                    key={user.id}
+                    className={style.friendItemStyled}
+                    onContextMenu={(e) => {
+                      handleFriendContextMenu(e, user, friendshipId);
+                    }}
+                  >
+                    <div className={style.avatarContainer}>
+                      <Avatar
+                        sx={{
+                          bgcolor: "var(--color-bg-tertiary)",
+                          color: "var(--color-white)",
+                          width: 44,
+                          height: 44,
+                          fontSize: "1.3rem",
+                          border: `2px solid var(--color-border-primary)`,
+                          padding: "0.4rem",
+                          transition:
+                            "background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.3s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "var(--color-bg-secondary)",
+                            borderColor: "var(--color-accent-pastel-main)",
+                            boxShadow: "0 0 10px var(--color-accent-vibrant-green-shadow-hover)",
+                            transform: "scale(1.1)",
+                          },
+                        }}
+                      >
+                        {getInitials(user.username)}
+                      </Avatar>
+                    </div>
+                    <Typography component="span" className={style.friendUsernameStyled}>
+                      {user.username}
+                    </Typography>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+          {friendsList.length === 0 && (
+            <p className={style.noFriendsMessage}>
+              {searchTerm ? "Ningun usuario coincide con su búsqueda" : "Sin amigos actualmente.."}
+            </p>
           )}
         </div>
         <FriendRequestModal open={openFriendRequestModal} onClose={handleCloseFriendRequestModal} />
@@ -289,7 +437,7 @@ const FriendModal = ({ open, onClose }: FriendModalProps) => {
             x={contextMenu.x}
             y={contextMenu.y}
             onClose={handleCloseContextMenu}
-            onDelete={handleDeleteFriend}
+            onDelete={handleDeleteFriendshipContext}
           />
         )}
       </Box>
