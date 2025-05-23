@@ -1,0 +1,48 @@
+.homePageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.filterControlsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  gap: 1rem;
+  align-self: center;
+}
+
+.searchBarContainer {
+  width: 50%;
+  align-self: center;
+}
+
+.appListContainer {
+  min-width: 81.5rem;
+  max-width: 81.5rem;
+}
+
+.appOtherList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.appMosaicList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
+}
+
+input[type="text"]::placeholder {
+  color: var(--text-primary);
+  opacity: 0.5;
+}

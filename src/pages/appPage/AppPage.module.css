@@ -1,0 +1,150 @@
+.appPageContainer {
+  background-color: var(--bg-secondary);
+  padding: 24px;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0.8rem auto;
+  min-width: 80rem;
+  max-width: 80rem;
+  border: 1px solid var(--text-primary);
+  border-radius: 1rem;
+}
+
+.appTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-alternative);
+  margin: 0;
+}
+
+.topRow {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.bottomRow {
+  display: flex;
+}
+
+.imageContainer {
+  aspect-ratio: 16 / 9;
+  min-width: 60%;
+  max-height: 24rem;
+  border: 1px solid var(--text-primary);
+  border-radius: 2rem;
+  margin: auto;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.imageContainer:hover {
+  transform: scale(1.05);
+}
+
+.appImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 2rem;
+}
+
+.appInfoContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-tertiary);
+  padding: 1rem;
+  border: 1px solid var(--text-primary);
+  border-radius: 0.5rem;
+  height: 20rem;
+  max-height: 20rem;
+  margin: 2rem 0;
+}
+
+.appInfoText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.aboutSection {
+  padding: 0 1.2rem 1.2rem 1.2rem;
+  max-width: 58%;
+  min-width: 58%;
+  height: 16rem;
+  margin-right: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--text-alternative);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--text-primary);
+  margin: 0;
+}
+
+.aboutDescription {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  max-height: 16rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.friendsContainer {
+  flex-grow: 1;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--text-primary);
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  padding: 0 2rem 2rem 2rem;
+  margin: auto;
+}
+
+.friendsSection {
+  padding: 20px;
+}
+
+.firendAvatar {
+  transition:
+    transform 0.2s ease-out,
+    background-color 0.2s ease-out,
+    border-color 0.2s ease-out;
+}
+
+.friendAvatar:hover {
+  background-color: var(--bg-primary);
+  border-color: var(--bg-tertiary);
+  transform: scale(1.15);
+  transition: transform 0.2s;
+  box-shadow: 0 0 8px var(--text-alternative);
+}
+
+.downloadButton {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: 1px solid var(--text-alternative);
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  display: flex;
+  gap: 0.5rem;
+  align-self: end;
+}
+.downloadButton:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-alternative);
+}

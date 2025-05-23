@@ -1,0 +1,130 @@
+.container {
+  display: flex;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--text-primary);
+  border-radius: 12px;
+  width: 100%;
+  height: 12rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  box-sizing: border-box;
+  color: var(--text-alternative);
+  overflow: visible;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.container:hover > .addButton {
+  opacity: 1;
+}
+
+.container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.contentWrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  border-left: 2px solid var(--text-primary);
+  padding: 15px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-alternative);
+}
+
+.titleWrapper {
+  display: flex;
+  margin-bottom: 0.4rem;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: var(--text-alternative);
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  max-width: 90%;
+  height: 4.5rem;
+}
+
+.dataWrapper {
+  margin-top: auto;
+  padding-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dataText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.versionText {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: auto;
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.addIcon {
+  color: var(--text-primary);
+  display: block;
+  margin-left: auto;
+}
+
+.hoverCard {
+  position: absolute;
+  left: 15rem;
+  opacity: 0;
+  transform: translateX(-50%) scale(0.35);
+  transition:
+    opacity 0.2s ease-out,
+    visibility 0s linear 0.2s,
+    transform 0.2s ease-out;
+  transition-delay: 0.5s;
+}
+
+.addButton {
+  height: fit-content;
+  width: fit-content;
+  opacity: 0;
+}
+.addIcon {
+  color: var(--text-primary);
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+.mainLinkArea {
+  display: flex;
+  flex-grow: 1;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}

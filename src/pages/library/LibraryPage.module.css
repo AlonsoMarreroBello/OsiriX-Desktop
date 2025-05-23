@@ -1,0 +1,44 @@
+.libraryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 5rem;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  width: 75%;
+  justify-content: center;
+  border-bottom: 2px solid var(--text-primary);
+}
+
+.headerTitle {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-right: 20rem;
+}
+
+.appMosaicList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.appListContainer {
+  min-width: 81.5rem;
+  max-width: 81.5rem;
+}
+
+.searchBarContainer {
+  flex-grow: 1;
+  align-content: center;
+}
+input[type="text"]::placeholder {
+  color: var(--text-primary);
+  opacity: 0.5;
+}

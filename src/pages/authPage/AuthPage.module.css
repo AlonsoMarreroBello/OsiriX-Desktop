@@ -1,0 +1,121 @@
+/* src/screens/LoginScreen/LoginScreen.module.css */
+.container {
+  display: flex;
+  min-height: 100vh;
+  /* O ajusta a la altura deseada */
+  width: 100%;
+  background-color: #f0f0f0;
+  /* Color de fondo general si es necesario */
+  font-family: sans-serif;
+  /* O la fuente que prefieras */
+}
+
+/* Panel Izquierdo */
+.leftPanel {
+  flex: 1;
+  /* Ocupa la mitad del espacio */
+  background-color: #adb5bd;
+  /* Gris claro */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  /* Para posicionar elementos si es necesario */
+}
+
+.logo {
+  max-width: 250px;
+  /* Ajusta el tamaño del logo */
+  height: auto;
+  margin-bottom: 2rem;
+}
+
+.quote {
+  font-size: 1.2rem;
+  color: #343a40;
+  /* Color oscuro para la frase */
+  font-style: italic;
+  /* Cursiva como en la imagen */
+  text-align: center;
+}
+
+/* Panel Derecho */
+.rightPanel {
+  flex: 1;
+  /* Ocupa la otra mitad */
+  background-color: #0d2a4d;
+  /* Azul oscuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #ffffff;
+  /* Texto blanco por defecto en este panel */
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 400px;
+  /* Ancho máximo del formulario */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  padding: 10px 25px;
+  border: 2px solid #ffffff;
+  /* Borde blanco */
+  border-radius: 15px;
+  /* Esquinas redondeadas */
+  text-align: center;
+  background-color: #0d2a4d;
+  /* Mismo fondo que el panel */
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Centra el botón */
+}
+
+.forgotPassword {
+  color: #ffffff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-top: -1rem;
+  /* Acércalo al campo de contraseña */
+  margin-bottom: 1.5rem;
+  align-self: flex-start;
+  /* Alínealo a la izquierda */
+  padding-left: 5px;
+  /* Pequeño ajuste visual */
+}
+
+.forgotPassword:hover {
+  text-decoration: underline;
+}
+
+.registerLink {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.registerLink a {
+  color: #a0d8ef;
+  /* Azul claro para el enlace */
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.registerLink a:hover {
+  text-decoration: underline;
+}
