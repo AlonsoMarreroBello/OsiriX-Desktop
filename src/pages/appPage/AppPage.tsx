@@ -12,7 +12,7 @@ const AppPage = () => {
   const appId = useParams().appId;
 
   const [appData, setAppData] = useState<AppInfo>(null);
-  const { startDownload } = useDownload();
+  const { startDownload, downloads } = useDownload();
   const getAppData = async () => {
     if (appId) {
       const fetchedApp = await appService.getAppById(Number(appId));
@@ -25,6 +25,11 @@ const AppPage = () => {
       startDownload(appData.appId, "data.zip", appData.name);
     }
   };
+  const isCurrentlyDownloadingThisApp = downloads.some(
+    (d) =>
+      d.appId === appData?.appId &&
+      (d.status === "downloading" || d.status === "extracting" || d.status === "creating_shortcut")
+  );
   useEffect(() => {
     getAppData();
   }, []);
@@ -131,8 +136,12 @@ const AppPage = () => {
         </div>
       </div>
       {appData.isDownloadable && (
-        <button className={style.downloadButton} onClick={handleDownload}>
-          Descargar
+        <button
+          className={style.downloadButton}
+          onClick={handleDownload}
+          disabled={isCurrentlyDownloadingThisApp} // Deshabilita si ya se está descargando
+        >
+          {isCurrentlyDownloadingThisApp ? "Descargando..." : "Descargar"}
           <Download fontSize="medium" />
         </button>
       )}

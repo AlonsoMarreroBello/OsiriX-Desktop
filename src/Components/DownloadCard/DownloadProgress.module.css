@@ -25,10 +25,9 @@
   position: relative;
   display: flex;
   align-items: stretch;
-  border: 2px solid var(--text-primary);
+  border: 2px solid var(--color-accent-pastel-main);
   cursor: pointer;
   overflow: hidden;
-  font-family: var(--download-font);
   color: var(--download-popup-text-primary);
   user-select: none;
   transition:
@@ -41,7 +40,7 @@
 /* --- Estado Colapsado --- */
 .collapsed {
   border-radius: 50%;
-  background-color: var(--download-popup-bg-collapsed);
+  background-color: var(--color-bg-secondary);
   padding: 4px;
   align-items: center;
 }
@@ -52,7 +51,7 @@
   /* La altura se ajustará al contenido gracias a flex column */
   min-height: 80px; /* Altura mínima */
   border-radius: 15px;
-  background-color: var(--download-popup-bg-expanded);
+  background-color: var(--color-bg-secondary);
   padding: 0;
 }
 
@@ -144,13 +143,13 @@
   text-align: center; /* Alineado a la izquierda */
   width: 100%; /* Ocupa todo el ancho */
   margin-bottom: 2px; /* Pequeño espacio abajo */
-  color: var(--text-alternative); /* Texto claro */
+  color: var(--color-white); /* Texto claro */
 }
 
 .progressMetaRow {
   display: flex;
   align-items: baseline;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   gap: 10px;
   width: 100%;
 }
@@ -158,25 +157,25 @@
 .percentage {
   font-size: 1.2rem;
   font-weight: bold;
-  color: var(--text-alternative);
-  flex-shrink: 0; 
+  color: var(--color-white);
+  flex-shrink: 0;
 }
 
 .appName {
   font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-grow: 1;
-  min-width: 0; 
+  min-width: 0;
   text-align: left;
 }
 
 .linearProgressBarContainer {
   width: 100%;
-  margin: 4px 0; 
-  display: flex; 
+  margin: 4px 0;
+  display: flex;
   flex-direction: row;
   gap: 0.5rem;
 }
@@ -197,14 +196,14 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-color: var(--text-primary);
+  background-color: var(--color-accent-pastel-main);
   border-radius: 3x;
   transition: width 0.3s ease-in-out;
 }
 
 .indexText {
   font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
   text-align: center;
   width: 100%;
 }
