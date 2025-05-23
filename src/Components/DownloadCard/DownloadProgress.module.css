@@ -72,7 +72,7 @@
   stroke: var(--download-circle-track);
 }
 .progressBar {
-  stroke: var(--text-primary);
+  stroke: var(--color-accent-pastel-main);
   transition: stroke-dashoffset 0.3s ease;
 }
 

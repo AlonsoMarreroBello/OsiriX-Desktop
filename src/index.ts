@@ -9,6 +9,8 @@ import {
   DownloadAppResult,
   DownloadFileDirectlyParams,
   DownloadProgressData,
+  UninstallAppParams,
+  UninstallAppResult,
 } from "./interfaces/Download";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -196,8 +198,7 @@ ipcMain.handle(
           });
       });
 
-      // (Opcional) Borrar el archivo ZIP después de extraer
-      // await fs.promises.unlink(zipPath);
+      await fs.promises.unlink(zipPath);
 
       // 3. Encontrar .exe
       sendProgress({ status: "creating_shortcut", message: `Buscando ejecutable...` });
@@ -271,3 +272,96 @@ const findExeRecursive = (dir: string): string | null => {
   console.log(`[findExeRecursive] No se encontró .exe en el nivel actual de: ${dir}`);
   return null;
 };
+
+ipcMain.handle(
+  "start-app-uninstall",
+  async (event, params: UninstallAppParams): Promise<UninstallAppResult> => {
+    const { appId, appName } = params;
+    console.log(`Main process: Iniciando desinstalación de ${appName} (ID: ${appId})`);
+
+    const downloadDir = "C:\\OsirixLibrary"; // Consistent with download
+    const extractPath = path.join(downloadDir, appName); // Folder where app was extracted
+    const zipFilename = `${appName.replace(/\s+/g, "_")}_${appId}.zip`; // Original ZIP filename
+    const zipPath = path.join(downloadDir, zipFilename);
+
+    const desktopPath = app.getPath("desktop");
+    const shortcutName = `${appName}.lnk`; // Assuming .lnk for Windows shortcuts
+    const shortcutPath = path.join(desktopPath, shortcutName);
+
+    let operationsFailed = false;
+    const errors: string[] = [];
+
+    try {
+      // 1. Delete the shortcut
+      try {
+        if (
+          await fs.promises
+            .access(shortcutPath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.promises.unlink(shortcutPath);
+          console.log(`Main process: Acceso directo ${shortcutPath} eliminado.`);
+        } else {
+          console.log(`Main process: No se encontró el acceso directo ${shortcutPath}, omitiendo.`);
+        }
+      } catch (err) {
+        console.error(`Main process: Error al eliminar acceso directo ${shortcutPath}:`, err);
+        errors.push(`Error al eliminar acceso directo: ${err.message}`);
+        operationsFailed = true;
+      }
+
+      // 2. Delete the extracted application folder
+      try {
+        if (
+          await fs.promises
+            .access(extractPath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.promises.rm(extractPath, { recursive: true, force: true });
+          console.log(`Main process: Carpeta de aplicación ${extractPath} eliminada.`);
+        } else {
+          console.log(`Main process: No se encontró la carpeta ${extractPath}, omitiendo.`);
+        }
+      } catch (err) {
+        console.error(`Main process: Error al eliminar la carpeta ${extractPath}:`, err);
+        errors.push(`Error al eliminar carpeta de aplicación: ${err.message}`);
+        operationsFailed = true;
+      }
+
+      // 3. (Optional) Delete the original ZIP file if it still exists
+      try {
+        if (
+          await fs.promises
+            .access(zipPath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.promises.unlink(zipPath);
+          console.log(`Main process: Archivo ZIP ${zipPath} eliminado.`);
+        } else {
+          console.log(`Main process: No se encontró el archivo ZIP ${zipPath}, omitiendo.`);
+        }
+      } catch (err) {
+        console.error(`Main process: Error al eliminar archivo ZIP ${zipPath}:`, err);
+        // This is less critical, so maybe don't set operationsFailed = true unless desired
+        // errors.push(`Error al eliminar archivo ZIP: ${err.message}`);
+      }
+
+      if (operationsFailed) {
+        const fullErrorMessage = `Errores durante la desinstalación de ${appName}: ${errors.join("; ")}`;
+        console.error(fullErrorMessage);
+        return { success: false, error: fullErrorMessage };
+      }
+
+      console.log(`Main process: Desinstalación de ${appName} completada.`);
+      return { success: true, message: `${appName} desinstalado correctamente.` };
+    } catch (err) {
+      // Catch-all for unexpected errors during the process
+      const errorMessage = `Error general durante la desinstalación de ${appName}: ${err.message || "Error desconocido"}`;
+      console.error(errorMessage, err);
+      return { success: false, error: errorMessage };
+    }
+  }
+);

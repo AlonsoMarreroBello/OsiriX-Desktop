@@ -9,13 +9,12 @@ import authService from "../../services/AuthService";
 
 interface DetailedAppCardProps {
   app: AppInfo;
+  handleClick?: () => void;
 }
 
-const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
+const DetailedAppCard = ({ app, handleClick }: DetailedAppCardProps) => {
   const navigate = useNavigate();
-  const pressed = async () => {
-    await appService.addAppToUserLibrary(app.appId, authService.getUserId());
-  };
+
   return (
     <div className={styles.container}>
       <a onClick={() => navigate(`/app/${app.appId}`)} className={styles.mainLinkArea}>
@@ -44,7 +43,7 @@ const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
           </div>
         </div>
       </a>
-      <Button onClick={pressed} className={styles.addButton}>
+      <Button onClick={handleClick} className={styles.addButton}>
         <AddCircleIcon className={styles.addIcon} fontSize="large" />
       </Button>
     </div>

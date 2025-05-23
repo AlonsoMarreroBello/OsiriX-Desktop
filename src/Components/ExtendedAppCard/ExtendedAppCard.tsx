@@ -9,9 +9,10 @@ interface ExtendedAppCardProps {
   app: AppInfo;
   onHover?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, app: AppInfo) => void;
   onLeave?: () => void;
+  handleClick?: () => void;
 }
 
-const ExtendedAppCard = ({ app, onHover, onLeave }: ExtendedAppCardProps) => {
+const ExtendedAppCard = ({ app, onHover, onLeave, handleClick }: ExtendedAppCardProps) => {
   const navigate = useNavigate();
   return (
     <div
@@ -40,7 +41,7 @@ const ExtendedAppCard = ({ app, onHover, onLeave }: ExtendedAppCardProps) => {
           </div>
         </div>
       </a>
-      <Button className={styles.addButton}>
+      <Button onClick={handleClick} className={styles.addButton}>
         <AddCircleIcon className={styles.addIcon} fontSize="large" />
       </Button>
     </div>

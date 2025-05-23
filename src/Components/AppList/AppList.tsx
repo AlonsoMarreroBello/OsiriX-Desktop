@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import AppInfo from "../../interfaces/AppInfo";
 import styles from "./AppList.module.css";
 import BasicAppCard from "../BasicAppCard/BasicAppCard";
@@ -8,6 +8,8 @@ import DetailedAppCard from "../DetailedAppCard/DetailedAppCard";
 
 import HoverAppCard from "../HoverAppCard/HoverAppCard";
 import { ViewMode } from "../../models/FilterModel";
+import appService from "../../services/AppService";
+import authService from "../../services/AuthService";
 
 interface AppListProps {
   apps: AppInfo[];
@@ -50,28 +52,25 @@ const AppList = ({
   const renderApps = (app: AppInfo) => {
     switch (viewMode) {
       case "mosaico":
-        return (
-          <BasicAppCard
-            key={app.appId}
-            app={app}
-            onHover={handleMouseEnter}
-            onLeave={handleMouseLeave}
-          />
-        );
+        return <BasicAppCard app={app} onHover={handleMouseEnter} onLeave={handleMouseLeave} />;
       case "lista":
         return (
           <ExtendedAppCard
-            key={app.appId}
             app={app}
             onHover={handleMouseEnter}
             onLeave={handleMouseLeave}
+            handleClick={() => handleAddToLibrary(app)}
           />
         );
       case "detalles":
-        return <DetailedAppCard key={app.appId} app={app} />;
+        return <DetailedAppCard app={app} handleClick={() => handleAddToLibrary(app)} />;
       default:
-        return <DetailedAppCard key={app.appId} app={app} />;
+        return <DetailedAppCard app={app} handleClick={() => handleAddToLibrary(app)} />;
     }
+  };
+
+  const handleAddToLibrary = async (app: AppInfo) => {
+    await appService.addAppToUserLibrary(app.appId, authService.getUserId());
   };
 
   useEffect(() => {
@@ -119,7 +118,11 @@ const AppList = ({
       <div className={withListContainer ? styles.listContainer : ""}>
         <div className={`${checkViewMode()} ${styles.appList}`}>
           {apps.length > 0 ? (
-            apps.map((app) => <>{app.isVisible && app.isPublished && renderApps(app)}</>)
+            apps.map((app) => (
+              <Fragment key={app.appId}>
+                {app.isVisible && app.isPublished && renderApps(app)}
+              </Fragment>
+            ))
           ) : (
             <div>No hay aplicaciones</div>
           )}

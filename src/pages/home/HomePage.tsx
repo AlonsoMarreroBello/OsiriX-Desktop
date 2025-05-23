@@ -71,6 +71,7 @@ const HomePage = () => {
       </div>
       <div className={style.filterControlsContainer}>
         <FilterBar
+          apps={apps}
           viewMode={viewMode}
           handleViewMode={handleViewModeChange}
           setApps={handleAppList}

@@ -2,7 +2,11 @@
 import axios from "axios";
 import { API_PORT } from "../port/ApiPort";
 import authService from "./AuthService";
-import { DownloadFileDirectlyParams } from "../interfaces/Download"; // Ajusta la ruta
+import {
+  DownloadFileDirectlyParams,
+  UninstallAppParams,
+  UninstallAppResult,
+} from "../interfaces/Download"; // Ajusta la ruta
 
 const downloadApp = async (
   appId: number,
@@ -55,6 +59,25 @@ const downloadApp = async (
 
 // arrayBufferToBase64 ya no es necesario aquí
 
+const uninstallApp = async (appId: number, appName: string): Promise<UninstallAppResult> => {
+  try {
+    console.log(`Solicitando desinstalaci贸n para ${appName} (ID: ${appId})`);
+    const params: UninstallAppParams = { appId, appName };
+    const result = await window.electron.startAppUninstall(params);
+
+    if (!result.success) {
+      console.error(`Fall贸 la desinstalaci贸n de ${appName} en el main process:`, result.error);
+      throw new Error(result.error || `Error al desinstalar ${appName}.`);
+    }
+    console.log(`${appName} desinstalado correctamente desde el main process.`);
+    return result;
+  } catch (error) {
+    console.error(`Error al solicitar desinstalaci贸n de ${appName} en renderer:`, error);
+    throw error;
+  }
+};
+
 export const downloadService = {
   downloadApp,
+  uninstallApp,
 };

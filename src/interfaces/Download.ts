@@ -24,3 +24,14 @@ export interface DownloadProgressData {
   error?: string;
   success?: boolean; // True si todo el proceso (descarga, extracción, shortcut) fue exitoso
 }
+
+export interface UninstallAppParams {
+  appId: number; // For potential use in finding specific files if needed, or logging
+  appName: string; // Crucial for finding the extraction folder and shortcut
+}
+
+export interface UninstallAppResult {
+  success: boolean;
+  message?: string;
+  error?: string;
+}

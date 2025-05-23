@@ -6,12 +6,14 @@ import AppInfo from "../../interfaces/AppInfo";
 import { useNavigate, useParams } from "react-router-dom";
 import appService from "../../services/AppService";
 import { useDownload } from "../../context/DownloadContext";
+import { downloadService } from "../../services/DownloadService";
 
 const AppPage = () => {
   const navigate = useNavigate();
   const appId = useParams().appId;
 
   const [appData, setAppData] = useState<AppInfo>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
   const { startDownload, downloads } = useDownload();
   const getAppData = async () => {
     if (appId) {
@@ -23,8 +25,21 @@ const AppPage = () => {
   const handleDownload = () => {
     if (appData) {
       startDownload(appData.appId, "data.zip", appData.name);
+      setIsInstalled(true);
     }
   };
+
+  const handleUninstall = async (appId: number, appName: string) => {
+    try {
+      const result = await downloadService.uninstallApp(appId, appName);
+      if (result.success) {
+        setIsInstalled(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const isCurrentlyDownloadingThisApp = downloads.some(
     (d) =>
       d.appId === appData?.appId &&
@@ -38,30 +53,16 @@ const AppPage = () => {
     return <Typography>Cargando datos de la aplicación...</Typography>;
   }
 
-  const getInitials = (name: string): string => {
-    if (!name) return "?";
-    const words = name.trim().split(/\s+/);
-    if (words.length === 0 || words[0] === "") return "?";
-    if (words.length > 1 && words[1] !== "") {
-      return `${words[0][0]}${words[1][0]}`.toUpperCase();
-    }
-    return words[0][0].toUpperCase();
-  };
-
-  // const handleDownload = () => {
-  //   if (appData.downloadLink) {
-  //     console.log("Iniciando descarga desde:", appData.downloadLink);
-  //   } else {
-  //     console.log("No hay enlace de descarga disponible.");
-  //   }
-  // };
-
-  // const getFriendInitials = (name: string): string => {
+  // const getInitials = (name: string): string => {
   //   if (!name) return "?";
   //   const words = name.trim().split(/\s+/);
   //   if (words.length === 0 || words[0] === "") return "?";
+  //   if (words.length > 1 && words[1] !== "") {
+  //     return `${words[0][0]}${words[1][0]}`.toUpperCase();
+  //   }
   //   return words[0][0].toUpperCase();
   // };
+
   return (
     <div className={style.appPageContainer}>
       <h1 className={style.appTitle}>{appData.name}</h1>
@@ -102,7 +103,7 @@ const AppPage = () => {
           <h1 className={style.sectionTitle}>Acerca de esta aplicación</h1>
           <p className={style.aboutDescription}>{appData.description}</p>
         </div>
-        <div className={style.friendsContainer}>
+        {/* <div className={style.friendsContainer}>
           <div className={style.friendsSection}>
             <h3 className={style.sectionTitle}>Amigos que tienen esta app</h3>
           </div>
@@ -119,7 +120,7 @@ const AppPage = () => {
               },
             }}
           >
-            {/* <Avatar
+            <Avatar
               sx={{
                 bgcolor: "var(--color-bg-tertiary)",
                 color: "var(--color-white)",
@@ -131,15 +132,23 @@ const AppPage = () => {
               }}
             >
               {getInitials(user.username)}
-            </Avatar> */}
+            </Avatar> 
           </AvatarGroup>
-        </div>
+        </div>*/}
       </div>
-      {appData.isDownloadable && (
+      {isInstalled ? (
+        <button
+          onClick={() => handleUninstall(appData.appId, appData.name)}
+          disabled={isCurrentlyDownloadingThisApp}
+          className={`${style.downloadButton} ${style.uninstallButton}`}
+        >
+          Desinstalar
+        </button>
+      ) : (
         <button
           className={style.downloadButton}
           onClick={handleDownload}
-          disabled={isCurrentlyDownloadingThisApp} // Deshabilita si ya se está descargando
+          disabled={isCurrentlyDownloadingThisApp}
         >
           {isCurrentlyDownloadingThisApp ? "Descargando..." : "Descargar"}
           <Download fontSize="medium" />

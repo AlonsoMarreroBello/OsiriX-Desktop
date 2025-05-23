@@ -22,24 +22,32 @@
 }
 
 .appListContainer {
-  min-width: 81.5rem;
-  max-width: 81.5rem;
+  width: 100%;
+  max-width: 81.5rem; /* Pero no más de 81.5rem */
+  margin-left: auto; /* Para centrar el contenedor si es más angosto */
+  margin-right: auto;
 }
 
 .appOtherList {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* Para 2 columnas, podría ser menos necesario, pero por consistencia: */
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr)); /* Ajusta 25rem */
   justify-content: center;
-  justify-items: center;
+  /* justify-items: center; */
   gap: 1rem;
+  width: 100%;
 }
 
 .appMosaicList {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-content: center;
-  justify-items: center;
+  /* Intenta encajar columnas de al menos, por ejemplo, 18rem.
+     'auto-fit' colapsará las pistas vacías, 'auto-fill' las mantendrá.
+     Prueba ambas para ver cuál se ajusta mejor a tu diseño. */
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  justify-content: center; /* Puede que no sea necesario si las columnas llenan el espacio */
+  /* justify-items: center; Mantenlo si quieres centrar el contenido DENTRO de cada celda */
   gap: 1rem;
+  width: 100%;
 }
 
 input[type="text"]::placeholder {

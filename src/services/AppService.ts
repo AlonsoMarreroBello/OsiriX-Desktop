@@ -110,6 +110,7 @@ const addAppToUserLibrary = async (appId: number, userId: number) => {
         },
       }
     );
+    console.log(response);
     return response.data.data;
   } catch (error) {
     console.error(error);

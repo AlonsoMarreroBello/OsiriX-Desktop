@@ -7,8 +7,9 @@ import {
   DownloadFileDirectlyParams,
   DownloadAppResult,
   DownloadProgressData,
+  UninstallAppParams,
+  UninstallAppResult,
 } from "./interfaces/Download";
-
 contextBridge.exposeInMainWorld("electron", {
   minimize: () => ipcRenderer.send("window:minimize"),
   maximize: () => ipcRenderer.send("window:maximize"),
@@ -30,6 +31,8 @@ contextBridge.exposeInMainWorld("electron", {
     // Devuelve una función para remover el listener, importante para evitar memory leaks
     return () => ipcRenderer.removeListener("download-progress", handler);
   },
+  startAppUninstall: (params: UninstallAppParams): Promise<UninstallAppResult> =>
+    ipcRenderer.invoke("start-app-uninstall", params),
 });
 
 declare global {
@@ -44,6 +47,7 @@ declare global {
       openExternal: (url: string) => void;
       startAppDownload: (params: DownloadFileDirectlyParams) => Promise<DownloadAppResult>; // NUEVO
       onDownloadProgress: (callback: (data: DownloadProgressData) => void) => () => void;
+      startAppUninstall: (params: UninstallAppParams) => Promise<UninstallAppResult>;
     };
   }
 }
