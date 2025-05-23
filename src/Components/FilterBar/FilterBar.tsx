@@ -22,6 +22,8 @@ import {
   menuPaperProps,
   viewOptions,
   ViewMode,
+  shuffleArray,
+  sortCriteriaToAppInfoKey,
 } from "../../models/FilterModel";
 import { GridView } from "@mui/icons-material";
 
@@ -153,58 +155,83 @@ const FilterBar = ({ apps: currentApps, viewMode, handleViewMode, setApps }: Fil
     );
   };
 
-  // MODIFICADO: Implementación de ordenamiento en el frontend
   const applySortFilters = () => {
-    const appsToSort = [...currentApps]; // Trabaja sobre una copia de las apps actuales
+    let appsToSort = [...currentApps]; // Trabaja sobre una copia de las apps actuales
+
+    // Manejar orden aleatorio primero
+    if (sortOrder === "shuffle") {
+      appsToSort = shuffleArray(appsToSort);
+      setApps(appsToSort);
+      handleCloseMenu(setAnchorElSort);
+      return; // Salir temprano si es aleatorio
+    }
 
     if (selectedSortBy.length > 0) {
       appsToSort.sort((a, b) => {
-        for (const criteria of selectedSortBy) {
-          // Asegúrate que 'criteria' sea una clave válida de AppInfo.
-          // Ej: 'name', 'publicationDate', 'downloads'
-          // Si usas nombres amigables en sortCriteriaOptions, necesitarás un mapeo aquí.
-          // ej: if (criteria === "Nombre") key = "name";
-          const key = criteria as keyof AppInfo; // Asumimos que criteria es una key válida
+        for (const criteriaLabel of selectedSortBy) {
+          const key = sortCriteriaToAppInfoKey[criteriaLabel];
 
-          let valA = a[key];
-          let valB = b[key];
+          if (!key) {
+            console.warn(
+              `Criterio de orden "${criteriaLabel}" no tiene una clave mapeada en AppInfo o la clave no es válida.`
+            );
+            continue;
+          }
 
-          // Manejo específico para tipos de datos
+          const valA_orig = a[key as keyof AppInfo];
+          const valB_orig = b[key as keyof AppInfo];
+
+          let valA_cmp: string | number | null = null;
+          let valB_cmp: string | number | null = null;
+
           if (key === "publicationDate") {
-            valA = new Date(a.publicationDate).getTime();
-            valB = new Date(b.publicationDate).getTime();
+            valA_cmp = valA_orig ? new Date(valA_orig as Date).getTime() : null; // Tratar como null si valA_orig es falsy (aunque no debería según AppInfo)
+            valB_cmp = valB_orig ? new Date(valB_orig as Date).getTime() : null; // Tratar como null si valB_orig es falsy
+          } else if (key === "name") {
+            // name es string
+            valA_cmp = typeof valA_orig === "string" ? valA_orig.toLowerCase() : ""; // Usar "" para strings vacíos/nulos para que no se traten como "mayor"
+            valB_cmp = typeof valB_orig === "string" ? valB_orig.toLowerCase() : "";
           } else if (key === "downloads") {
-            valA = a.downloads ?? 0; // Tratar null/undefined como 0
-            valB = b.downloads ?? 0;
-          } else if (typeof valA === "string" && typeof valB === "string") {
-            valA = valA.toLowerCase();
-            valB = valB.toLowerCase();
+            // downloads es number | undefined
+            valA_cmp = typeof valA_orig === "number" ? valA_orig : null; // Tratar undefined como null para la comparación
+            valB_cmp = typeof valB_orig === "number" ? valB_orig : null;
+          }
+          // No hay más claves para ordenar según la interfaz y sortCriteriaOptions actualizados
+
+          let comparisonResult = 0;
+
+          // Lógica de comparación: los nulos/vacíos van al final en orden ascendente, al principio en descendente.
+          if ((valA_cmp === null || valA_cmp === "") && (valB_cmp === null || valB_cmp === "")) {
+            comparisonResult = 0;
+          } else if (valA_cmp === null || valA_cmp === "") {
+            // valA es nulo/vacío, valB no
+            comparisonResult = 1; // valA es "mayor"
+          } else if (valB_cmp === null || valB_cmp === "") {
+            // valB es nulo/vacío, valA no
+            comparisonResult = -1; // valA es "menor"
+          } else {
+            // Ninguno es nulo/vacío, comparar directamente
+            if (valA_cmp < valB_cmp) {
+              comparisonResult = -1;
+            } else if (valA_cmp > valB_cmp) {
+              comparisonResult = 1;
+            }
           }
 
-          let comparison = 0;
-          if (valA < valB) {
-            comparison = -1;
-          } else if (valA > valB) {
-            comparison = 1;
-          }
-
-          if (comparison !== 0) {
-            return sortOrder === "asc" ? comparison : comparison * -1;
+          if (comparisonResult !== 0) {
+            return sortOrder === "asc" ? comparisonResult : comparisonResult * -1;
           }
         }
-        return 0; // Si todos los criterios de orden son iguales
+        return 0;
       });
     }
 
-    setApps(appsToSort); // Actualiza el estado en el componente padre
+    setApps(appsToSort);
     handleCloseMenu(setAnchorElSort);
   };
 
   const cancelSortFilters = () => {
     setSelectedSortBy([]);
-    // setSortOrder(sortOrderOptions[0]?.value || "asc"); // Opcional: resetear orden
-    // Similar a cancelDateFilters, resetear el orden puede ser complejo
-    // si se combina con otros filtros. Por ahora, solo cierra.
     handleCloseMenu(setAnchorElSort);
   };
 

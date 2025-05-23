@@ -1,3 +1,5 @@
+import AppInfo from "../interfaces/AppInfo";
+
 type CategoryTab = "GAME" | "APP";
 
 type ViewMode = "mosaico" | "lista" | "detalles";
@@ -14,11 +16,9 @@ const sortOrderOptions: SortOrderOption[] = [
   { value: "shuffle", label: "Aleatorio" }, // Cambié "sHufFle" a un valor más estándar y un label amigable
 ];
 const sortCriteriaOptions = [
-  "Fecha de lanzamiento",
-  "Descargas",
-  "Tamaño de archivo",
-  "Nombre de la app",
-  "Última actualización",
+  "Fecha de lanzamiento", // Mapea a AppInfo.publicationDate
+  "Descargas", // Mapea a AppInfo.downloads
+  "Nombre de la app", // Mapea a AppInfo.name
 ];
 
 export { CategoryTab, ViewMode, sortOrderOptions, sortCriteriaOptions };
@@ -76,3 +76,19 @@ export const viewOptions = [
   { label: "Lista", value: "lista" },
   { label: "Detalles", value: "detalles" },
 ];
+
+export const sortCriteriaToAppInfoKey: Record<string, keyof AppInfo | undefined> = {
+  "Fecha de lanzamiento": "publicationDate",
+  Descargas: "downloads",
+  "Nombre de la app": "name",
+};
+
+// Fisher-Yates shuffle algorithm (sin cambios)
+export function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
