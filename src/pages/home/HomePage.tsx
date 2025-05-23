@@ -52,7 +52,7 @@ const HomePage = () => {
     const fetchedApps = await appService.getApps();
     const appsWithImgs = await Promise.all(
       fetchedApps.map(async (app: AppInfo) => {
-        const appImgUrl = await appService.getImageByAppId(app.appId);
+        const appImgUrl = await appService.getImageByAppId(app.appId, "icono");
         return { ...app, imgUrl: appImgUrl };
       })
     );

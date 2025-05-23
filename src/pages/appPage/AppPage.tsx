@@ -5,21 +5,26 @@ import { Download } from "@mui/icons-material";
 import AppInfo from "../../interfaces/AppInfo";
 import { useNavigate, useParams } from "react-router-dom";
 import appService from "../../services/AppService";
+import { useDownload } from "../../context/DownloadContext";
 
 const AppPage = () => {
   const navigate = useNavigate();
   const appId = useParams().appId;
 
   const [appData, setAppData] = useState<AppInfo>(null);
-
+  const { startDownload } = useDownload();
   const getAppData = async () => {
     if (appId) {
       const fetchedApp = await appService.getAppById(Number(appId));
-      const appImgUrl = await appService.getImageByAppId(fetchedApp.appId);
+      const appImgUrl = await appService.getImageByAppId(fetchedApp.appId, "img0");
       setAppData({ ...fetchedApp, imgUrl: appImgUrl });
     }
   };
-
+  const handleDownload = () => {
+    if (appData) {
+      startDownload(appData.appId, "data.zip", appData.name);
+    }
+  };
   useEffect(() => {
     getAppData();
   }, []);
@@ -126,7 +131,7 @@ const AppPage = () => {
         </div>
       </div>
       {appData.isDownloadable && (
-        <button className={style.downloadButton}>
+        <button className={style.downloadButton} onClick={handleDownload}>
           Descargar
           <Download fontSize="medium" />
         </button>

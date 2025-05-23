@@ -4,6 +4,8 @@ import styles from "./DetailedAppCard.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import appService from "../../services/AppService";
+import authService from "../../services/AuthService";
 
 interface DetailedAppCardProps {
   app: AppInfo;
@@ -11,8 +13,8 @@ interface DetailedAppCardProps {
 
 const DetailedAppCard = ({ app }: DetailedAppCardProps) => {
   const navigate = useNavigate();
-  const pressed = () => {
-    console.log("presionao");
+  const pressed = async () => {
+    await appService.addAppToUserLibrary(app.appId, authService.getUserId());
   };
   return (
     <div className={styles.container}>

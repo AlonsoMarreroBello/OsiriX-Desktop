@@ -29,7 +29,7 @@ const PublisherPage = () => {
     const fetchedApps = await appService.getAppsByPublisherId(Number(publisherId));
     const appsWithImgs = await Promise.all(
       fetchedApps.map(async (app: AppInfo) => {
-        const appImgUrl = await appService.getImageByAppId(app.appId);
+        const appImgUrl = await appService.getImageByAppId(app.appId, "icono");
         return { ...app, imgUrl: appImgUrl };
       })
     );

@@ -2,6 +2,7 @@ import axios from "axios";
 import { API_PORT } from "../port/ApiPort";
 import authService from "./AuthService";
 import { MINIO_IMG_PORT } from "../port/MinIoPort";
+import { ImgType } from "../models/ImgModel";
 
 const getApps = async () => {
   try {
@@ -94,8 +95,25 @@ const getAppsByPublisherId = async (publisherId: number) => {
   }
 };
 
-const getImageByAppId = async (appId: number) => {
-  return MINIO_IMG_PORT(appId, "image");
+const getImageByAppId = async (appId: number, imgFileName: ImgType) => {
+  return MINIO_IMG_PORT(appId, imgFileName);
+};
+
+const addAppToUserLibrary = async (appId: number, userId: number) => {
+  try {
+    const response = await axios.post(
+      `${API_PORT}/apps/${appId}/library/user/${userId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${authService.getToken()}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const appService = {
@@ -107,6 +125,7 @@ const appService = {
   getAppsByDeveloperId,
   getAppsByPublisherId,
   getImageByAppId,
+  addAppToUserLibrary,
 };
 
 export default appService;

@@ -41,7 +41,7 @@ app.whenReady().then(() => {
       `default-src 'self'`,
       `script-src 'self' ${isDev ? "'unsafe-eval'" : ""}`,
       `style-src 'self' 'unsafe-inline'`,
-      `connect-src 'self' http://localhost:8080`,
+      `connect-src 'self' http://localhost:8080 http://localhost:9000`,
       `connect-src 'self' http://localhost:9092`,
       `connect-src 'self' http://localhost:9000`,
       `img-src 'self' data: http://localhost:9000`,

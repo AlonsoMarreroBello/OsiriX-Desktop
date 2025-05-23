@@ -25,7 +25,7 @@ const DeveloperPage = () => {
     const fetchedApps = await appService.getAppsByDeveloperId(Number(developerId));
     const appsWithImgs = await Promise.all(
       fetchedApps.map(async (app: AppInfo) => {
-        const appImgUrl = await appService.getImageByAppId(app.appId);
+        const appImgUrl = await appService.getImageByAppId(app.appId, "icono");
         return { ...app, imgUrl: appImgUrl };
       })
     );
