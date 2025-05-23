@@ -26,12 +26,13 @@ import {
 import { GridView } from "@mui/icons-material";
 
 interface FilterBarProps {
+  apps: AppInfo[];
   viewMode: ViewMode;
   handleViewMode: (mode: string) => void;
   setApps: (apps: AppInfo[]) => void;
 }
 
-const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
+const FilterBar = ({ apps: currentApps, viewMode, handleViewMode, setApps }: FilterBarProps) => {
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
   const [anchorElDate, setAnchorElDate] = useState<null | HTMLElement>(null);
   const [anchorElSort, setAnchorElSort] = useState<null | HTMLElement>(null);
@@ -96,7 +97,13 @@ const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
       } else {
         fetchedApps = await appService.getApps();
       }
-      setApps(fetchedApps);
+      const appsWithImgs = await Promise.all(
+        fetchedApps.map(async (app: AppInfo) => {
+          const appImgUrl = await appService.getImageByAppId(app.appId, "icono");
+          return { ...app, imgUrl: appImgUrl };
+        })
+      );
+      setApps(appsWithImgs);
     } catch (error) {
       console.error("Error applying category filters:", error);
       const fallbackApps = await appService.getApps();
@@ -107,12 +114,38 @@ const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
 
   const cancelCategoryFilters = () => handleCloseMenu(setAnchorElCategory);
 
-  const applyDateFilters = async () => {
-    console.log("Applying date filters (simulated):", { startDate, endDate });
-    // TODO: Implementar servicio real
+  const applyDateFilters = () => {
+    let appsToFilter = [...currentApps]; // Trabaja sobre una copia de las apps actuales
+
+    if (startDate || endDate) {
+      const startFilterDate = startDate ? new Date(startDate) : null;
+      const endFilterDate = endDate ? new Date(endDate) : null;
+
+      // Ajustar las fechas de filtro para que incluyan todo el día
+      // Para startDate, queremos comparar desde el inicio del día (00:00:00)
+      // Para endDate, queremos comparar hasta el final del día (23:59:59)
+      if (startFilterDate) startFilterDate.setHours(0, 0, 0, 0);
+      if (endFilterDate) endFilterDate.setHours(23, 59, 59, 999);
+
+      appsToFilter = appsToFilter.filter((app) => {
+        // publicationDate ya es un objeto Date en AppInfo
+        const pubDate = new Date(app.publicationDate);
+
+        const passesStartDate = startFilterDate ? pubDate >= startFilterDate : true;
+        const passesEndDate = endFilterDate ? pubDate <= endFilterDate : true;
+
+        return passesStartDate && passesEndDate;
+      });
+    }
+
+    setApps(appsToFilter); // Actualiza el estado en el componente padre
     handleCloseMenu(setAnchorElDate);
   };
-  const cancelDateFilters = () => handleCloseMenu(setAnchorElDate);
+  const cancelDateFilters = () => {
+    setStartDate("");
+    setEndDate("");
+    handleCloseMenu(setAnchorElDate);
+  };
 
   const handleSortByCheckboxChange = (criteria: string) => {
     setSelectedSortBy((prev) =>
@@ -120,12 +153,60 @@ const FilterBar = ({ viewMode, handleViewMode, setApps }: FilterBarProps) => {
     );
   };
 
-  const applySortFilters = async () => {
-    console.log("Applying sort filters (simulated):", { sortBy: selectedSortBy, order: sortOrder });
-    // TODO: Implementar servicio real
+  // MODIFICADO: Implementación de ordenamiento en el frontend
+  const applySortFilters = () => {
+    const appsToSort = [...currentApps]; // Trabaja sobre una copia de las apps actuales
+
+    if (selectedSortBy.length > 0) {
+      appsToSort.sort((a, b) => {
+        for (const criteria of selectedSortBy) {
+          // Asegúrate que 'criteria' sea una clave válida de AppInfo.
+          // Ej: 'name', 'publicationDate', 'downloads'
+          // Si usas nombres amigables en sortCriteriaOptions, necesitarás un mapeo aquí.
+          // ej: if (criteria === "Nombre") key = "name";
+          const key = criteria as keyof AppInfo; // Asumimos que criteria es una key válida
+
+          let valA = a[key];
+          let valB = b[key];
+
+          // Manejo específico para tipos de datos
+          if (key === "publicationDate") {
+            valA = new Date(a.publicationDate).getTime();
+            valB = new Date(b.publicationDate).getTime();
+          } else if (key === "downloads") {
+            valA = a.downloads ?? 0; // Tratar null/undefined como 0
+            valB = b.downloads ?? 0;
+          } else if (typeof valA === "string" && typeof valB === "string") {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+          }
+
+          let comparison = 0;
+          if (valA < valB) {
+            comparison = -1;
+          } else if (valA > valB) {
+            comparison = 1;
+          }
+
+          if (comparison !== 0) {
+            return sortOrder === "asc" ? comparison : comparison * -1;
+          }
+        }
+        return 0; // Si todos los criterios de orden son iguales
+      });
+    }
+
+    setApps(appsToSort); // Actualiza el estado en el componente padre
     handleCloseMenu(setAnchorElSort);
   };
-  const cancelSortFilters = () => handleCloseMenu(setAnchorElSort);
+
+  const cancelSortFilters = () => {
+    setSelectedSortBy([]);
+    // setSortOrder(sortOrderOptions[0]?.value || "asc"); // Opcional: resetear orden
+    // Similar a cancelDateFilters, resetear el orden puede ser complejo
+    // si se combina con otros filtros. Por ahora, solo cierra.
+    handleCloseMenu(setAnchorElSort);
+  };
 
   const handleSelectViewOption = (mode: string) => {
     handleViewMode(mode);
